@@ -1,0 +1,33 @@
+{
+  "name": "world-cup-jelly-sdk",
+  "version": "0.1.0",
+  "description": "Agent-first TypeScript SDK for FIFA World Cup data, structured football context, and prediction-market decision support.",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "fifa",
+    "world-cup",
+    "football",
+    "prediction",
+    "polymarket",
+    "kalshi",
+    "agent",
+    "sdk"
+  ],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0"
+  }
+}
