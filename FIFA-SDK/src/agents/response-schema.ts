@@ -6,12 +6,16 @@ export class ResponseSchema {
   validate(obj: unknown): obj is AgentPredictionContext {
     if (typeof obj !== 'object' || obj === null) return false;
     const ctx = obj as Record<string, unknown>;
+    const entities = ctx['entities'];
+    const signals = ctx['signals'];
+    const entitiesRecord = typeof entities === 'object' && entities !== null ? (entities as Record<string, unknown>) : null;
+    const signalsRecord = typeof signals === 'object' && signals !== null ? (signals as Record<string, unknown>) : null;
     return (
       typeof ctx['question'] === 'string' &&
       typeof ctx['marketPlatform'] === 'string' &&
       typeof ctx['marketType'] === 'string' &&
-      Array.isArray((ctx['entities'] as any)?.teams) &&
-      typeof (ctx['signals'] as any)?.confidence === 'number' &&
+      entitiesRecord !== null && Array.isArray(entitiesRecord['teams']) &&
+      signalsRecord !== null && typeof signalsRecord['confidence'] === 'number' &&
       typeof ctx['explanation'] === 'string' &&
       typeof ctx['generatedAt'] === 'string'
     );

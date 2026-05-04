@@ -1,13 +1,21 @@
 import { AgentRuntime } from './agent-runtime.js';
+import { MarketPlatform } from '../types.js';
 
 export type ToolName =
   | 'resolve_market_question'
   | 'get_fixture_context'
   | 'get_group_table'
-  | 'get_knockout_path'
-  | 'get_team_form'
-  | 'compare_market_vs_model'
   | 'explain_world_cup_prediction';
+
+export interface ToolDefinition {
+  name: ToolName;
+  description: string;
+  input_schema: {
+    type: 'object';
+    properties: Record<string, { type: string; description?: string; enum?: string[] }>;
+    required?: string[];
+  };
+}
 
 export interface ToolCall {
   name: ToolName;
@@ -34,7 +42,7 @@ export class ToolAdapter {
         case 'resolve_market_question':
           data = await this.runtime.getPredictionContext({
             question: String(call.parameters['question'] ?? ''),
-            platform: (call.parameters['platform'] as any) ?? 'POLYMARKET',
+            platform: (call.parameters['platform'] as MarketPlatform | undefined) ?? 'POLYMARKET',
           });
           break;
         case 'get_fixture_context':
@@ -69,13 +77,13 @@ export class ToolAdapter {
   }
 
   /** Return a tool schema for all supported tools (for Claude function calling). */
-  getToolDefinitions(): object[] {
+  getToolDefinitions(): ToolDefinition[] {
     return [
       {
-        name: 'resolve_market_question',
+        name: 'resolve_market_question' as const,
         description: 'Parse a prediction market question about FIFA World Cup and return structured context',
         input_schema: {
-          type: 'object',
+          type: 'object' as const,
           properties: {
             question: { type: 'string', description: 'The market question to resolve' },
             platform: { type: 'string', enum: ['POLYMARKET', 'KALSHI'] },
@@ -84,29 +92,29 @@ export class ToolAdapter {
         },
       },
       {
-        name: 'get_fixture_context',
+        name: 'get_fixture_context' as const,
         description: 'Get full match context including form, standings and narrative for a fixture',
         input_schema: {
-          type: 'object',
-          properties: { fixtureId: { type: 'string' } },
+          type: 'object' as const,
+          properties: { fixtureId: { type: 'string', description: 'Normalized fixture ID, e.g. wc26-match-048' } },
           required: ['fixtureId'],
         },
       },
       {
-        name: 'get_group_table',
+        name: 'get_group_table' as const,
         description: 'Get current group standings table with team form',
         input_schema: {
-          type: 'object',
+          type: 'object' as const,
           properties: { groupCode: { type: 'string', description: 'Group letter A-L' } },
           required: ['groupCode'],
         },
       },
       {
-        name: 'explain_world_cup_prediction',
+        name: 'explain_world_cup_prediction' as const,
         description: 'Get a full explanation with confidence, factors, and evidence for a World Cup prediction',
         input_schema: {
-          type: 'object',
-          properties: { question: { type: 'string' } },
+          type: 'object' as const,
+          properties: { question: { type: 'string', description: 'The prediction question to explain' } },
           required: ['question'],
         },
       },

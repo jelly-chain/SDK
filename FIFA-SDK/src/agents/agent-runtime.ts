@@ -1,4 +1,4 @@
-import { AgentPredictionContext, MarketPlatform, MarketType } from '../types.js';
+import { AgentPredictionContext, GroupCode, MarketPlatform, MarketType } from '../types.js';
 import type { FifaNamespace, IntelligenceNamespace, PredictionNamespace, MarketsNamespace } from '../sdk.js';
 
 export interface AgentRuntimeConfig {
@@ -55,7 +55,7 @@ export class AgentRuntime {
     }
 
     if (parsed.extractedGroup) {
-      const groupCode = parsed.extractedGroup.replace('wc26-group-', '').toUpperCase() as any;
+      const groupCode = parsed.extractedGroup.replace('wc26-group-', '').toUpperCase() as GroupCode;
       evidence.standings = await this.fifa.standings.group(groupCode);
     }
 
@@ -105,7 +105,7 @@ export class AgentRuntime {
   /** Get structured group-stage context including standings and form. */
   async getGroupContext(input: GroupContextInput): Promise<object> {
     const { groupCode, platform = 'POLYMARKET' } = input;
-    const code = groupCode.toUpperCase() as any;
+    const code = groupCode.toUpperCase() as GroupCode;
     const [group, standings] = await Promise.all([
       this.fifa.groups.byCode(code),
       this.fifa.standings.group(code),
