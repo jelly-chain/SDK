@@ -1,0 +1,9 @@
+{
+  "id": "live-events",
+  "displayName": "Live Events",
+  "description": "Track and react to live sports event changes via triggers for odds, injuries, and key goals.",
+  "version": "0.1.0",
+  "entry": "./src/skills/live-events/index.ts",
+  "tools": ["create_goal_alert", "create_injury_update_alert", "create_odds_spike_alert"],
+  "tags": ["live", "alerts", "events", "triggers"]
+}

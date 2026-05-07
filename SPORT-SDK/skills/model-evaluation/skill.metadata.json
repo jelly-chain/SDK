@@ -1,0 +1,9 @@
+{
+  "id": "model-evaluation",
+  "displayName": "Model Evaluation",
+  "description": "Evaluate prediction models using proper scoring rules and calibration-aware metrics.",
+  "version": "0.1.0",
+  "entry": "./src/skills/model-evaluation/index.ts",
+  "tools": ["compute_brier_score", "compute_log_loss", "analyze_roi", "cross_validate_model"],
+  "tags": ["evaluation", "metrics", "calibration"]
+}

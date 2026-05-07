@@ -1,0 +1,9 @@
+{
+  "id": "{{SKILL_ID}}",
+  "displayName": "{{SKILL_DISPLAY_NAME}}",
+  "description": "{{SKILL_DESCRIPTION}}",
+  "version": "0.1.0",
+  "entry": "{{ENTRY_PATH}}",
+  "tools": ["{{TOOL_NAME_1}}"],
+  "tags": ["{{TAG_1}}"]
+}

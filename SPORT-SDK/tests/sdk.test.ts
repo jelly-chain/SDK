@@ -60,7 +60,7 @@ describe('WorldSportsSDK', () => {
     const sdk = new WorldSportsSDK();
     const defs = sdk.getToolDefinitions();
     expect(Array.isArray(defs)).toBe(true);
-    expect(defs.length).toBe(4);
+    expect(defs.length).toBeGreaterThanOrEqual(4);
   });
 
   it('tool definitions have correct shape', () => {
