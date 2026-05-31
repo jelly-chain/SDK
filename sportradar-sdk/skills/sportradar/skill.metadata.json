@@ -1,0 +1,22 @@
+{
+  "name": "sportradar",
+  "displayName": "Sportradar Sports Data",
+  "version": "1.0.0",
+  "description": "Tier 1 sports data provider — real-time scores, play-by-play, injuries, lineups across 80+ sports",
+  "category": "data-provider",
+  "priority": "P0",
+  "requiredKeys": ["SPORTRADAR_API_KEY"],
+  "optionalKeys": [],
+  "capabilities": [
+    "live-scores",
+    "play-by-play",
+    "injuries",
+    "lineups",
+    "statistics",
+    "standings",
+    "schedules"
+  ],
+  "sports": ["football", "basketball", "tennis", "american-football", "baseball", "ice-hockey", "mma", "formula1"],
+  "sdk": "sportradar-sdk",
+  "entryPoint": "src/index.ts"
+}
