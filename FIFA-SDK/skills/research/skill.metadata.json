@@ -1,9 +1,0 @@
-{
-  "id": "research",
-  "displayName": "Research",
-  "description": "Gather and synthesize evidence for sports predictions (team news, weather impacts, pre-match research).",
-  "version": "0.1.0",
-  "entry": "./src/skills/research/index.ts",
-  "tools": ["run_pre_match_research", "summarize_team_news", "analyze_weather_impact"],
-  "tags": ["research", "evidence", "pre-match"]
-}

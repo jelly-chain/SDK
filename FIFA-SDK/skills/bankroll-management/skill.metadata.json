@@ -1,9 +1,0 @@
-{
-  "id": "bankroll-management",
-  "displayName": "Bankroll Management",
-  "description": "Calculate and manage staking decisions with risk-aware sizing.",
-  "version": "0.1.0",
-  "entry": "./src/skills/bankroll-management/index.ts",
-  "tools": ["kelly_stake", "fixed_unit_stake", "portfolio_exposure", "risk_cap_check"],
-  "tags": ["bankroll", "risk", "staking"]
-}
