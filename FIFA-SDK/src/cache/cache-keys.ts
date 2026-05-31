@@ -1,0 +1,23 @@
+/** Deterministic cache key builders for all SDK modules. */
+export const CacheKeys = {
+  fixture: (id: string) => `fixtures:id:${id}`,
+  fixtureList: (filters: object) => `fixtures:list:${JSON.stringify(filters)}`,
+  team: (id: string) => `teams:id:${id}`,
+  teamList: () => 'teams:list',
+  group: (code: string) => `groups:code:${code}`,
+  groupList: () => 'groups:list',
+  standings: (group: string) => `standings:group:${group}`,
+  standingsAll: () => 'standings:all',
+  squad: (teamId: string) => `squads:team:${teamId}`,
+  player: (id: string) => `players:id:${id}`,
+  venue: (id: string) => `venues:id:${id}`,
+  venueList: () => 'venues:list',
+  bracket: () => 'bracket:current',
+  matchEvents: (matchId: string) => `events:match:${matchId}`,
+  history: (year: number) => `history:wc:${year}`,
+  headToHead: (a: string, b: string) => `history:h2h:${[a, b].sort().join('-')}`,
+  form: (teamId: string, window: number) => `intelligence:form:${teamId}:${window}`,
+  matchup: (a: string, b: string) => `intelligence:matchup:${[a, b].sort().join('-')}`,
+  polymarketSearch: (query: string) => `markets:polymarket:search:${query}`,
+  kalshiSearch: (query: string) => `markets:kalshi:search:${query}`,
+};
