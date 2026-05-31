@@ -1,0 +1,9 @@
+{
+  "id": "data-fetching",
+  "displayName": "Data Fetching",
+  "description": "Robustly fetch sports data from multiple providers with cache, rate limiting, and failover.",
+  "version": "0.1.0",
+  "entry": "./src/skills/data-fetching/index.ts",
+  "tools": ["fetch_provider_data", "build_cache_key", "should_retry_fetch"],
+  "tags": ["data", "providers", "cache", "rate-limit"]
+}

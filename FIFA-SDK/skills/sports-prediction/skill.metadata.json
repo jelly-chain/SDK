@@ -1,0 +1,9 @@
+{
+  "id": "sports-prediction",
+  "displayName": "Sports Prediction",
+  "description": "Analyze sports prediction questions using pre-match, live, and season-long workflows.",
+  "version": "0.1.0",
+  "entry": "./src/skills/sports-prediction/index.ts",
+  "tools": ["resolve_sports_prediction_question", "get_prediction_priors", "get_prediction_live_context"],
+  "tags": ["sports", "prediction", "workflows"]
+}

@@ -1,37 +1,30 @@
 # Roadmap
 
-## v0.1 (Current)
-- Full TypeScript SDK structure with typed stubs
-- FIFA data layer: fixtures, teams, groups, standings, squads, players, venues, bracket, events, history
-- Intelligence layer: form, matchup, injuries, narratives, tiebreaks, qualification paths
-- Prediction layer: feature building, market-question parsing, confidence scoring, explanations
-- Markets: Polymarket and Kalshi read-only stubs
-- Agent tools: Claude/Jelly-compatible tool adapter and response formatter
-- Memory cache, backtesting scaffold, replay engine
+## v0.1.0 (current)
 
-## v0.2
-- Live api-football.com integration (real HTTP calls)
-- Live Polymarket CLOB API integration
-- Squad news via news provider
-- Venue weather enrichment
-- Historical World Cup fixture data (2018, 2022)
+- 6 provider clients (BallDontLie, API-Sports, football-data.org, TheSportsDB, Sportmonks, The Odds API)
+- Multi-sport types: football, basketball, american-football, tennis, baseball, ice-hockey, mma, formula1
+- 4 Claude agent tools: `resolve_sports_question`, `get_match_context`, `get_league_table`, `explain_sports_prediction`
+- Full intelligence layer: form, matchup, injuries, squad strength, schedule pressure, upsets, narratives
+- Prediction layer: question parsing, feature building, confidence engine, scenario generation, calibration
+- Polymarket + Kalshi market integration (read-only)
+- In-memory TTL cache
+- Backtesting engine with Brier score / log loss / calibration error
+- Match replay + event reconstruction
+- `skills/sports/SKILL.md` for Jelly Claude integration
 
-## v0.3
-- Live Kalshi API integration
-- Head-to-head history from real data sources
-- Backtesting runner against 2018 and 2022 data
-- Calibration reporting
+## v0.2.0 (planned)
 
-## v1.0
-- Production-ready provider adapters
-- Redis cache support
-- Scenario simulation with Monte Carlo
-- Price-vs-model comparison alerts
-- Full test coverage
-- npm publish as `world-cup-jelly-sdk`
+- Live provider data hydration (BallDontLie NBA live scores)
+- Redis cache support (multi-process)
+- F1 standings and race result integration
+- Tennis grand slam bracket tracking
+- Player-level prop market support
+- Odds API implied probability integration into confidence engine
 
-## v1.1
-- Live match event monitoring
-- Real-time standing updates during group stage
-- Alerting hooks for qualification scenario changes
-- Replay engine for live match debugging
+## v0.3.0 (planned)
+
+- Sportradar and SportsDataIO adapters
+- iSports API adapter (Asia-Pacific coverage)
+- Portfolio-level market tracking (multi-sport, multi-platform)
+- USD enrichment from market data

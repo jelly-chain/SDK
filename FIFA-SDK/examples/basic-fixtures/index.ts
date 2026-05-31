@@ -1,24 +1,27 @@
-import { WorldCupJellySDK } from '../../src/sdk.js';
+import { WorldSportsSDK } from '../../src/index.js';
 
-const sdk = new WorldCupJellySDK({
+const sdk = new WorldSportsSDK({
   providers: {
-    footballApi: { apiKey: process.env['FOOTBALL_API_KEY'] },
+    footballData: { apiKey: process.env['FOOTBALL_DATA_API_KEY'] },
   },
-  cache: { type: 'memory', ttlSeconds: 120 },
+  cache: { ttlSeconds: 120 },
 });
 
 async function main() {
-  console.log('Fetching group-stage fixtures for Brazil...');
-  const fixtures = await sdk.fifa.fixtures.list({ stage: 'group', team: 'team-brazil' });
-  console.log(`Found ${fixtures.length} fixtures:`, fixtures);
+  console.log('Fetching Premier League standings...');
+  const standings = await sdk.sports.standings.byLeague('premier-league', '2025/2026');
+  console.log('Top 5:');
+  standings.slice(0, 5).forEach((s, i) => {
+    console.log(`  ${i + 1}. TeamId: ${s.teamId} — ${s.points} pts`);
+  });
 
-  console.log('\nFetching Group A standings...');
-  const standings = await sdk.fifa.standings.group('A');
-  console.log('Group A standings:', standings);
+  console.log('\nFetching upcoming fixtures...');
+  const fixtures = await sdk.sports.fixtures.upcoming('team-arsenal');
+  console.log(`Found ${fixtures.length} upcoming fixtures`);
 
-  console.log('\nFetching current bracket state...');
-  const bracket = await sdk.fifa.bracket.current();
-  console.log('Bracket nodes:', bracket.length);
+  console.log('\nLeague catalog (football):');
+  const leagues = await sdk.sports.leagues.bySport('football');
+  leagues.slice(0, 5).forEach((l) => console.log(`  - ${l.name} (${l.currentSeason})`));
 }
 
 main().catch(console.error);

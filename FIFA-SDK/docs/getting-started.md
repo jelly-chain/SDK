@@ -3,47 +3,41 @@
 ## Installation
 
 ```bash
-npm install world-cup-jelly-sdk
+npm install  # install dependencies
 ```
 
-## Basic Setup
+Copy `.env.example` to `.env` and add the API key for at least one provider.
+
+## First SDK Call
 
 ```ts
-import { WorldCupJellySDK } from 'world-cup-jelly-sdk';
+import { WorldSportsSDK } from 'sports-jelly-sdk';
 
-const sdk = new WorldCupJellySDK({
+const sdk = new WorldSportsSDK({
   providers: {
-    footballApi: { apiKey: process.env.FOOTBALL_API_KEY },
-    polymarket: { enabled: true },
+    ballDontLie: { apiKey: process.env.BALLDONTLIE_API_KEY },
+    theOddsApi: { apiKey: process.env.ODDS_API_KEY },
   },
-  cache: { type: 'memory', ttlSeconds: 120 },
+  cache: { ttlSeconds: 120 },
   agent: { format: 'claude-json' },
 });
-```
 
-## Quick Example
-
-```ts
-// Ask a prediction question
-const context = await sdk.agents.getPredictionContext({
-  question: 'Will Brazil win Group G?',
+// Answer a prediction question
+const ctx = await sdk.agents.getSportsContext({
+  question: 'Will the Lakers beat the Celtics?',
   platform: 'POLYMARKET',
 });
 
-console.log(context.signals.confidence);  // e.g. 0.72
-console.log(context.explanation);         // Human-readable reasoning
+console.log(ctx.signals.confidence);   // e.g. 0.61
+console.log(ctx.explanation);          // Human-readable reasoning
 ```
 
-## Required Environment Variables
+## Wiring to Jelly Claude
 
-| Variable | Required | Purpose |
-|---|---|---|
-| `FOOTBALL_API_KEY` | Recommended | Live fixture/standings data |
-| `KALSHI_KEY_ID` | Optional | Kalshi market reads |
-| `KALSHI_PRIVATE_KEY` | Optional | Kalshi market reads |
+```ts
+import { ToolAdapter } from 'sports-jelly-sdk';
 
-## Next Steps
-
-- See [providers.md](./providers.md) to configure data sources.
-- See [agent-integration.md](./agent-integration.md) to wire into Jelly Claude.
-- See [data-model.md](./data-model.md) for all entity schemas.
+const tools = sdk.tools; // already constructed
+const defs = tools.getToolDefinitions(); // pass to Claude
+const result = await tools.execute({ name: toolCall.name, parameters: toolCall.input });
+```

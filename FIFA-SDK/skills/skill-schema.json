@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "version", "skills"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "displayName",
+          "description",
+          "entry",
+          "tools",
+          "tags",
+          "version"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "displayName": { "type": "string" },
+          "description": { "type": "string" },
+          "entry": { "type": "string" },
+          "tools": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "version": { "type": "string" }
+        }
+      }
+    }
+  }
+}

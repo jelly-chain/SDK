@@ -1,7 +1,7 @@
 {
-  "name": "world-cup-jelly-sdk",
+  "name": "sports-jelly-sdk",
   "version": "0.1.0",
-  "description": "Agent-first TypeScript SDK for FIFA World Cup data, structured football context, and prediction-market decision support.",
+  "description": "Agent-first TypeScript SDK for multi-sport intelligence and prediction-market decision support — NBA, NFL, football, tennis, MLB, NHL and more.",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -11,9 +11,13 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "fifa",
-    "world-cup",
+    "sports",
+    "nba",
+    "nfl",
     "football",
+    "tennis",
+    "mlb",
+    "nhl",
     "prediction",
     "polymarket",
     "kalshi",

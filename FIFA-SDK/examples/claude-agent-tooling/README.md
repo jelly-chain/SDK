@@ -1,15 +1,7 @@
-# Claude Agent Tooling Example
+# Example: Claude Agent Tooling
 
-Shows how to use the SDK as Claude function-calling tools inside a Jelly agent.
-
-## Run
+Full Claude function-calling simulation — registers all 4 tools and executes them.
 
 ```bash
-FOOTBALL_API_KEY=your_key npx tsx index.ts
+npx tsx examples/claude-agent-tooling/index.ts
 ```
-
-## What it does
-
-1. Lists all available SDK tool definitions in Claude function-calling format.
-2. Simulates a tool call for `resolve_market_question`.
-3. Formats the output as a Claude-compatible tool result.

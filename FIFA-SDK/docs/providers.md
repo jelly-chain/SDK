@@ -1,63 +1,35 @@
 # Providers
 
-The SDK uses a pluggable provider system. Each provider is optional and can be enabled in the config.
+## Overview
 
-## football-api (Recommended)
+sports-jelly-sdk supports 6 live data providers plus 3 additional keys for extended coverage.
 
-Uses [api-football.com](https://api-football.com) for fixtures, standings, squads, and player data.
+| Provider | Key Env Var | Sports Coverage | Free Tier |
+|---|---|---|---|
+| **BallDontLie** | `BALLDONTLIE_API_KEY` | NBA, NFL, MLB, NHL, EPL, MMA, FIFA | 5 req/min |
+| **API-Sports** | `SPORTS_API_KEY` | Football, NBA, NFL, F1, Tennis, Baseball | 100 req/day |
+| **football-data.org** | `FOOTBALL_DATA_API_KEY` | 12 football competitions | 10 req/min |
+| **TheSportsDB** | `THESPORTSDB_PATREON_KEY` | All sports (v1 free, v2 Patreon) | v1 unlimited |
+| **Sportmonks** | `SPORTMONKS_API_KEY` | Football, Cricket, F1 | Limited leagues |
+| **The Odds API** | `ODDS_API_KEY` | NFL, NBA, Soccer, Tennis, MLB, NHL | 500 req/month |
+
+## Client Architecture
+
+Each provider has three files:
+- `client.ts` — HTTP client extending `AbstractProvider`
+- `adapter.ts` — Raw API types → SDK normalized types
+- `types.ts` — Raw API response shapes
+
+All providers extend `AbstractProvider` which provides `logRequest()`, `handleError()`, and `get<T>()`.
+
+## Enabling Providers
 
 ```ts
-const sdk = new WorldCupJellySDK({
+const sdk = new WorldSportsSDK({
   providers: {
-    footballApi: { apiKey: process.env.FOOTBALL_API_KEY }
-  }
+    ballDontLie: { apiKey: process.env.BALLDONTLIE_API_KEY },
+    footballData: { apiKey: process.env.FOOTBALL_DATA_API_KEY },
+    theOddsApi: { apiKey: process.env.ODDS_API_KEY },
+  },
 });
-```
-
-The FIFA World Cup 2026 league ID on api-football.com is `1`.
-
-## fifa-platform (Optional)
-
-Stub for the official FIFA data platform. Requires appropriate licensing for production use.
-
-```ts
-providers: { fifa: { enabled: true } }
-```
-
-## polymarket (Default: enabled)
-
-Reads public Polymarket markets. No authentication required.
-
-```ts
-providers: { polymarket: { enabled: true } }
-```
-
-## kalshi (Optional)
-
-Reads Kalshi prediction markets. Requires API credentials.
-
-```ts
-providers: {
-  kalshi: {
-    enabled: true,
-    keyId: process.env.KALSHI_KEY_ID,
-    privateKey: process.env.KALSHI_PRIVATE_KEY,
-  }
-}
-```
-
-## news (Optional)
-
-Fetches team news and injury updates.
-
-```ts
-providers: { news: { enabled: true, apiKey: process.env.NEWS_API_KEY } }
-```
-
-## weather (Optional)
-
-Fetches venue weather forecasts for match context enrichment.
-
-```ts
-providers: { weather: { enabled: true, apiKey: process.env.WEATHER_API_KEY } }
 ```

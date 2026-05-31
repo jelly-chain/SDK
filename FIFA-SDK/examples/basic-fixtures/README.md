@@ -1,15 +1,7 @@
-# Basic Fixtures Example
+# Example: Basic Fixtures
 
-Demonstrates fetching fixtures, standings, and bracket state from the World Cup Jelly SDK.
-
-## Run
+Demonstrates fetching league standings, upcoming fixtures, and league catalog.
 
 ```bash
-FOOTBALL_API_KEY=your_key npx tsx index.ts
+FOOTBALL_DATA_API_KEY=your_key npx tsx examples/basic-fixtures/index.ts
 ```
-
-## What it does
-
-1. Lists all group-stage fixtures for a specific team.
-2. Fetches Group A current standings.
-3. Reads the current knockout bracket state.

@@ -1,35 +1,51 @@
-import { WorldCupJellySDK } from '../../src/sdk.js';
-import { ToolAdapter } from '../../src/agents/tool-adapter.js';
-import { ClaudeFormat } from '../../src/agents/claude-format.js';
-import { ResponseSchema } from '../../src/agents/response-schema.js';
+import { WorldSportsSDK } from '../../src/index.js';
 
-const sdk = new WorldCupJellySDK({
-  providers: { footballApi: { apiKey: process.env['FOOTBALL_API_KEY'] } },
+const sdk = new WorldSportsSDK({
+  providers: { polymarket: { enabled: true } },
   agent: { format: 'claude-json' },
 });
 
-const tools     = new ToolAdapter(sdk.agents);
-const formatter = new ClaudeFormat();
-const schema    = new ResponseSchema();
-
 async function main() {
-  console.log('Available agent tools:');
-  const defs = tools.getToolDefinitions();
-  defs.forEach(d => console.log(` - ${d.name}: ${d.description}`));
+  console.log('Claude Agent Tooling Example\n');
 
-  console.log('\nSimulating tool call: resolve_market_question');
-  const result = await tools.execute({
-    name: 'resolve_market_question',
+  const toolDefs = sdk.getToolDefinitions();
+  console.log(`Registered ${toolDefs.length} tools for Claude function calling:\n`);
+  for (const def of toolDefs) {
+    console.log(`  [${def.name}]`);
+    console.log(`    ${def.description}`);
+    const required = def.input_schema.required?.join(', ') ?? 'none';
+    console.log(`    Required params: ${required}`);
+  }
+
+  console.log('\nSimulating Claude calling resolve_sports_question...\n');
+  const result = await sdk.tools.execute({
+    name: 'resolve_sports_question',
     parameters: {
-      question: 'Will England win Group C?',
+      question: 'Will Real Madrid win the Champions League this season?',
       platform: 'POLYMARKET',
     },
   });
-  console.log('Tool result:', JSON.stringify(result, null, 2));
 
-  if (result.success && schema.validate(result.data)) {
-    const formatted = formatter.formatPredictionContext(result.data);
-    console.log('\nClaude tool output:', JSON.stringify(formatted, null, 2));
+  if (result.success) {
+    const ctx = result.data as Record<string, unknown>;
+    const signals = ctx['signals'] as Record<string, unknown> | undefined;
+    console.log(`  Sport: ${ctx['sport']}`);
+    console.log(`  League: ${ctx['league']}`);
+    console.log(`  Confidence: ${signals ? ((signals['confidence'] as number) * 100).toFixed(0) : '?'}%`);
+    console.log(`  Explanation: ${ctx['explanation']}`);
+  } else {
+    console.error(`  Error: ${result.error}`);
+  }
+
+  console.log('\nSimulating explain_sports_prediction...\n');
+  const explain = await sdk.tools.execute({
+    name: 'explain_sports_prediction',
+    parameters: { question: 'Will the Chiefs repeat as NFL Super Bowl winners?' },
+  });
+
+  if (explain.success) {
+    const env = explain.data as Record<string, unknown>;
+    console.log(`  Tool: ${env['tool']}, Version: ${env['version']}`);
   }
 }
 

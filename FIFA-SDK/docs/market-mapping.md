@@ -1,42 +1,34 @@
 # Market Mapping
 
-How the SDK maps prediction market questions to World Cup entities and resolution criteria.
+## Question → Market Type
 
-## Supported Market Types
+The `MarketQuestionParser` maps natural language questions to `SportMarketType` values:
 
-| Market Type | Resolution |
+| Keyword(s) | Market Type |
 |---|---|
-| `MATCH_WINNER` | Team wins the match (not draw) |
-| `GROUP_WINNER` | Team finishes 1st in their group |
-| `QUALIFICATION` | Team finishes top 2 in group |
-| `REACH_R16` | Team reaches Round of 16 |
-| `REACH_QF` | Team reaches Quarterfinal |
-| `REACH_SF` | Team reaches Semifinal |
-| `REACH_FINAL` | Team reaches the Final |
-| `TOURNAMENT_WINNER` | Team wins FIFA World Cup 2026 |
-| `TOP_SCORER` | Player wins Golden Boot |
+| win, beat, winner | `MATCH_WINNER` |
+| champion, title | `CHAMPIONSHIP_WINNER` |
+| series | `SERIES_WINNER` |
+| over, under | `OVER_UNDER` |
+| spread, handicap | `SPREAD` |
+| qualify, advance | `QUALIFICATION` |
+| relegated | `RELEGATION` |
+| top scorer | `TOP_SCORER` |
+| mvp | `MVP` |
 
-## Parsing a Market Question
+## Sport Detection
 
-```ts
-const parsed = sdk.prediction.parser.parse(
-  'Will England win Group C?'
-);
-// { marketType: 'GROUP_WINNER', extractedTeams: ['team-england'], extractedGroup: 'wc26-group-c' }
-```
+| Keywords | Detected Sport |
+|---|---|
+| football, soccer, premier league, la liga, bundesliga, serie a | `football` |
+| nba, basketball | `basketball` |
+| nfl, super bowl | `american-football` |
+| tennis, wimbledon, us open | `tennis` |
+| mlb, world series | `baseball` |
+| nhl, hockey | `ice-hockey` |
+| ufc, mma | `mma` |
+| f1, formula 1, grand prix | `formula1` |
 
-## Polymarket Integration
+## Resolution Criteria
 
-```ts
-const market = await sdk.markets.polymarket.find({
-  query: 'Will Brazil win the 2026 FIFA World Cup?'
-});
-const mapped = sdk.markets.common.resolveQuestion(market.question);
-```
-
-## Kalshi Integration
-
-```ts
-const market = await sdk.markets.kalshi.market('FIFA-WC26-ARG-WIN');
-const snapshot = await sdk.markets.kalshi.market('FIFA-WC26-ARG-WIN');
-```
+Use `sdk.prediction.resolution.map(marketType, league)` to get a `ResolutionCriteria` object describing what triggers resolution for any market type.

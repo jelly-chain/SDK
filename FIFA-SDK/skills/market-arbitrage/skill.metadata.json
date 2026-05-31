@@ -1,0 +1,9 @@
+{
+  "id": "market-arbitrage",
+  "displayName": "Market Arbitrage",
+  "description": "Identify and act on EV opportunities across multiple sports prediction platforms.",
+  "version": "0.1.0",
+  "entry": "./src/skills/market-arbitrage/index.ts",
+  "tools": ["detect_arbitrage_opportunity", "calculate_arbitrage_ev", "suggest_arbitrage_execution"],
+  "tags": ["arbitrage", "ev", "multi-platform"]
+}

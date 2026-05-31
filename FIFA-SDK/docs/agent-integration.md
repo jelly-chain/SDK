@@ -1,46 +1,45 @@
 # Agent Integration
 
-How to wire the World Cup Jelly SDK into a Jelly Claude agent.
+## Jelly Claude Integration
 
-## Installation in jelly-claude-main
+Place `sports-jelly-sdk/` alongside your `jelly-claude/` workspace:
 
-Copy or symlink the `world-cup-jelly-sdk` folder into your agent workspace and import:
-
-```ts
-import { WorldCupJellySDK } from '../world-cup-jelly-sdk/src/index.js';
-import { ToolAdapter } from '../world-cup-jelly-sdk/src/agents/tool-adapter.js';
-
-const sdk = new WorldCupJellySDK({ providers: { footballApi: { apiKey: process.env.FOOTBALL_API_KEY } } });
-const tools = new ToolAdapter(sdk.agents);
+```
+~/jelly/
+  jelly-claude/
+  SDK/
+    SPORT-SDK/    ← this SDK
 ```
 
-## Registering Tools with Claude
+## Registering Tools
 
 ```ts
-const toolDefs = tools.getToolDefinitions();
-// Pass toolDefs as `tools` in your Claude API call
+import { WorldSportsSDK } from '../SPORT-SDK/src/index.js';
+
+const sdk = new WorldSportsSDK({ providers: { ... } });
+const toolDefs = sdk.getToolDefinitions();
+// Pass toolDefs to Claude's tools array
 ```
 
 ## Handling Tool Calls
 
 ```ts
-const result = await tools.execute({
-  name: toolCall.name,
+const result = await sdk.tools.execute({
+  name: toolCall.name as ToolName,
   parameters: toolCall.input,
 });
-// Return result.data as the tool_result content
+// Return result.data as the tool_result content block
 ```
 
-## Full Agent Workflow
+## Available Claude Tools
 
-1. Claude receives a Polymarket question.
-2. Claude calls `resolve_market_question` tool.
-3. SDK parses the question, fetches standings/form/squad data.
-4. SDK returns structured `AgentPredictionContext`.
-5. Claude writes a human-readable answer from the context.
+| Tool | Parameters | Returns |
+|---|---|---|
+| `resolve_sports_question` | `question`, `platform?` | `AgentSportsContext` |
+| `get_match_context` | `fixtureId`, `platform?` | Match context object |
+| `get_league_table` | `league`, `season?` | Standings + league context |
+| `explain_sports_prediction` | `question` | Full Claude envelope with explanation |
 
-## Tips
+## Skill File
 
-- Always call `getPredictionContext` before answering World Cup market questions.
-- Use `confidence` and `riskFlags` to communicate uncertainty to users.
-- Use `narrativeTags` to add context about team situations (must-win, injury impact, etc.).
+The `skills/sports/SKILL.md` file teaches a Jelly Claude agent how to use this SDK automatically when the folder is present alongside jelly-claude.

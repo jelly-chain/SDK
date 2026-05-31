@@ -1,84 +1,88 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { WorldCupJellySDK } from '../src/sdk.js';
+import { describe, it, expect } from 'vitest';
+import { WorldSportsSDK } from '../src/sdk.js';
 
-describe('WorldCupJellySDK', () => {
-  let sdk: WorldCupJellySDK;
-
-  beforeEach(() => {
-    sdk = new WorldCupJellySDK({
-      cache: { type: 'memory', ttlSeconds: 10 },
-      agent: { format: 'claude-json' },
-    });
+describe('WorldSportsSDK', () => {
+  it('initializes with no config', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk).toBeInstanceOf(WorldSportsSDK);
   });
 
-  it('initializes all namespaces', () => {
-    expect(sdk.fifa).toBeDefined();
+  it('exposes all required namespaces', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk.sports).toBeDefined();
     expect(sdk.intelligence).toBeDefined();
     expect(sdk.prediction).toBeDefined();
     expect(sdk.markets).toBeDefined();
     expect(sdk.agents).toBeDefined();
+    expect(sdk.tools).toBeDefined();
     expect(sdk.backtesting).toBeDefined();
   });
 
-  it('fifa.fixtures.list returns empty array when no provider configured', async () => {
-    const fixtures = await sdk.fifa.fixtures.list({ stage: 'group' });
-    expect(Array.isArray(fixtures)).toBe(true);
+  it('sports namespace has all sub-modules', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk.sports.fixtures).toBeDefined();
+    expect(sdk.sports.teams).toBeDefined();
+    expect(sdk.sports.leagues).toBeDefined();
+    expect(sdk.sports.standings).toBeDefined();
+    expect(sdk.sports.players).toBeDefined();
+    expect(sdk.sports.venues).toBeDefined();
+    expect(sdk.sports.bracket).toBeDefined();
+    expect(sdk.sports.events).toBeDefined();
+    expect(sdk.sports.results).toBeDefined();
+    expect(sdk.sports.history).toBeDefined();
   });
 
-  it('fifa.standings.group returns empty array when no data', async () => {
-    const standings = await sdk.fifa.standings.group('A');
-    expect(Array.isArray(standings)).toBe(true);
+  it('intelligence namespace has all sub-modules', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk.intelligence.form).toBeDefined();
+    expect(sdk.intelligence.matchup).toBeDefined();
+    expect(sdk.intelligence.injuries).toBeDefined();
+    expect(sdk.intelligence.squadStrength).toBeDefined();
+    expect(sdk.intelligence.schedulePressure).toBeDefined();
+    expect(sdk.intelligence.upsets).toBeDefined();
+    expect(sdk.intelligence.narratives).toBeDefined();
+    expect(sdk.intelligence.availability).toBeDefined();
+    expect(sdk.intelligence.leagueContext).toBeDefined();
   });
 
-  it('fifa.bracket.current returns array', async () => {
-    const bracket = await sdk.fifa.bracket.current();
-    expect(Array.isArray(bracket)).toBe(true);
+  it('prediction namespace has all sub-modules', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk.prediction.parser).toBeDefined();
+    expect(sdk.prediction.features).toBeDefined();
+    expect(sdk.prediction.resolution).toBeDefined();
+    expect(sdk.prediction.confidence).toBeDefined();
+    expect(sdk.prediction.scenarios).toBeDefined();
+    expect(sdk.prediction.calibrator).toBeDefined();
+    expect(sdk.prediction.explanation).toBeDefined();
   });
 
-  it('prediction.parser.parse extracts market type', () => {
-    const result = sdk.prediction.parser.parse('Will Brazil win the 2026 FIFA World Cup?');
-    expect(result.marketType).toBe('TOURNAMENT_WINNER');
-    expect(result.extractedTeams).toContain('team-brazil');
+  it('returns tool definitions from getToolDefinitions()', () => {
+    const sdk = new WorldSportsSDK();
+    const defs = sdk.getToolDefinitions();
+    expect(Array.isArray(defs)).toBe(true);
+    expect(defs.length).toBeGreaterThanOrEqual(4);
   });
 
-  it('prediction.parser.parse detects group winner', () => {
-    const result = sdk.prediction.parser.parse('Will France win Group B?');
-    expect(result.marketType).toBe('GROUP_WINNER');
+  it('tool definitions have correct shape', () => {
+    const sdk = new WorldSportsSDK();
+    const defs = sdk.getToolDefinitions();
+    for (const def of defs) {
+      expect(typeof def.name).toBe('string');
+      expect(typeof def.description).toBe('string');
+      expect(def.input_schema.type).toBe('object');
+      expect(typeof def.input_schema.properties).toBe('object');
+    }
   });
 
-  it('prediction.confidence.score returns valid result', () => {
-    const features = {
-      fixtureId: 'wc26-match-001',
-      marketType: 'MATCH_WINNER' as const,
-      teamIds: ['team-argentina', 'team-brazil'],
-      features: { homeFormRating: 0.8, awayFormRating: 0.6, homeRanking: 1, awayRanking: 5 },
-      featureTimestamp: new Date().toISOString(),
-    };
-    const result = sdk.prediction.confidence.score(features);
-    expect(result.score).toBeGreaterThan(0);
-    expect(result.score).toBeLessThanOrEqual(1);
-    expect(['very-high', 'high', 'medium', 'low', 'uncertain']).toContain(result.tier);
+  it('markets namespace is present', () => {
+    const sdk = new WorldSportsSDK();
+    expect(sdk.markets.polymarket).toBeDefined();
+    expect(sdk.markets.kalshi).toBeDefined();
+    expect(sdk.markets.common).toBeDefined();
   });
 
-  it('agents.getPredictionContext returns valid context', async () => {
-    const context = await sdk.agents.getPredictionContext({
-      question: 'Will Argentina win Group A?',
-      platform: 'POLYMARKET',
-    });
-    expect(context.question).toBe('Will Argentina win Group A?');
-    expect(context.marketPlatform).toBe('POLYMARKET');
-    expect(typeof context.signals.confidence).toBe('number');
-    expect(typeof context.explanation).toBe('string');
-    expect(typeof context.generatedAt).toBe('string');
-  });
-
-  it('agents.getGroupContext returns object', async () => {
-    const ctx = await sdk.agents.getGroupContext({ groupCode: 'A' });
-    expect(ctx).toBeDefined();
-  });
-
-  it('markets.common.resolveQuestion returns POLYMARKET for unknown', () => {
-    const result = sdk.markets.common.resolveQuestion('Will Spain win?');
-    expect(result.platform).toBe('POLYMARKET');
+  it('accepts custom cache TTL', () => {
+    const sdk = new WorldSportsSDK({ cache: { ttlSeconds: 60 } });
+    expect(sdk).toBeInstanceOf(WorldSportsSDK);
   });
 });

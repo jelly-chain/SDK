@@ -1,59 +1,48 @@
 # Data Model
 
-All SDK entities use deterministic normalized IDs.
+## Core Entity Types
 
-## ID Conventions
-
-| Entity | Format | Example |
+### `Fixture`
+| Field | Type | Description |
 |---|---|---|
-| Tournament | `fifa-wc-{year}` | `fifa-wc-2026` |
-| Group | `wc{yy}-group-{code}` | `wc26-group-b` |
-| Fixture | `wc{yy}-match-{nnn}` | `wc26-match-048` |
-| Team | `team-{slug}` | `team-argentina` |
-| Player | `player-{slug}` | `player-kylian-mbappe` |
-| Venue | `venue-{slug}` | `venue-sofi-stadium` |
+| `id` | `string` | Deterministic fixture ID |
+| `sport` | `Sport` | e.g. `'football'`, `'basketball'` |
+| `league` | `League` | e.g. `'premier-league'`, `'nba'` |
+| `season` | `string` | e.g. `'2025/2026'` |
+| `stage` | `MatchStage` | `'regular'`, `'playoff'`, `'final'` |
+| `homeTeamId` | `string` | Home team normalized ID |
+| `awayTeamId` | `string` | Away team normalized ID |
+| `kickoffUtc` | `string` | ISO 8601 UTC kickoff time |
+| `status` | `MatchStatus` | `'scheduled'`, `'live'`, `'finished'`, `'postponed'` |
+| `homeScore?` | `number` | Home score (when available) |
+| `awayScore?` | `number` | Away score (when available) |
 
-## Core Types
+### `Team`
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Normalized team ID, e.g. `team-arsenal` |
+| `name` | `string` | Full team name |
+| `shortName` | `string` | 3-letter abbreviation |
+| `sport` | `Sport` | Sport type |
+| `league` | `League` | Primary league |
+| `countryCode?` | `string` | ISO 3166-1 alpha-3 |
+| `ranking?` | `number` | Official ranking (if applicable) |
 
-### Fixture
-```ts
-interface Fixture {
-  id: string;
-  tournamentId: string;
-  stage: MatchStage;
-  groupCode?: GroupCode;
-  homeTeamId: string;
-  awayTeamId: string;
-  venueId: string;
-  kickoffUtc: string;
-  status: 'scheduled' | 'live' | 'finished' | 'postponed';
-  homeScore?: number;
-  awayScore?: number;
-}
-```
+### `Standing`
+| Field | Type | Description |
+|---|---|---|
+| `teamId` | `string` | Team ID |
+| `league` | `League` | League |
+| `season` | `string` | Season |
+| `position` | `number` | Current position |
+| `points` | `number` | Points total |
+| `won`, `drawn`, `lost` | `number` | Record |
 
-### Team
-```ts
-interface Team {
-  id: string;
-  name: string;
-  shortName: string;
-  countryCode: string;
-  fifaRanking?: number;
-  groupCode?: GroupCode;
-}
-```
+### `AgentSportsContext`
 
-### AgentPredictionContext
-```ts
-type AgentPredictionContext = {
-  question: string;
-  marketPlatform: "POLYMARKET" | "KALSHI";
-  marketType: "MATCH_WINNER" | "GROUP_WINNER" | "QUALIFICATION" | ...;
-  entities: { teams: string[]; fixtureId?: string; tournament: string };
-  evidence: { standings?: object; form?: object; squadNews?: object[] };
-  signals: { favorite?: string; confidence: number; riskFlags: string[]; narrativeTags: string[] };
-  explanation: string;
-  generatedAt: string;
-};
-```
+The primary output type when answering a prediction question. Contains:
+- `signals.confidence` — 0–1 probability estimate
+- `signals.riskFlags` — array of string risk tags
+- `signals.narrativeTags` — array of narrative context tags
+- `evidence` — standings, form, injuries
+- `explanation` — human-readable reasoning string
