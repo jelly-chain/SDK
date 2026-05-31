@@ -1,0 +1,12 @@
+{
+  "name": "esports-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Esports intelligence for JellyOS — League of Legends, CS2, Dota 2, Valorant with prediction market integration.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["esports", "league-of-legends", "cs2", "dota2", "valorant", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

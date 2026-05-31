@@ -1,0 +1,12 @@
+{
+  "name": "cricket-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Cricket intelligence for JellyOS — IPL, ICC events, Big Bash with prediction market integration.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["cricket", "ipl", "icc", "big-bash", "prediction", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

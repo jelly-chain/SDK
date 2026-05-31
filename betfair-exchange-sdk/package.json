@@ -1,0 +1,12 @@
+{
+  "name": "betfair-exchange-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Betfair Exchange integration for JellyOS — real orderbook data, exchange odds, and market depth.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["betfair", "exchange", "odds", "orderbook", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

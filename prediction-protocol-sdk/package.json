@@ -1,0 +1,12 @@
+{
+  "name": "prediction-protocol-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Prediction market protocol integration for JellyOS — Gnosis conditional tokens, Augur markets, settlement mechanics.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["gnosis", "augur", "prediction", "protocol", "settlement", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

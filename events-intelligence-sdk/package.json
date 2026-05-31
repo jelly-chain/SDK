@@ -1,0 +1,12 @@
+{
+  "name": "events-intelligence-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Event-driven market intelligence for JellyOS — Eventbrite, Ticketmaster, concert/festival data for prediction triggers.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["events", "eventbrite", "ticketmaster", "concerts", "prediction", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

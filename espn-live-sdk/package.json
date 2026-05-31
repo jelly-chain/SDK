@@ -1,0 +1,12 @@
+{
+  "name": "espn-live-jelly-sdk",
+  "version": "1.0.0",
+  "description": "ESPN public API integration for JellyOS — free real-time scores, standings, schedules across all major sports.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["espn", "scores", "standings", "schedules", "free", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

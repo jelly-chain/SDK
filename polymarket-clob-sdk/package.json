@@ -1,0 +1,12 @@
+{
+  "name": "polymarket-clob-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Deep Polymarket CLOB integration for JellyOS — full orderbook depth, trade history, resolution data, and arbitrage detection.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["polymarket", "prediction-market", "clob", "orderbook", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "social-sentiment-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Social media sentiment analysis for JellyOS — Twitter/Reddit buzz as prediction signals for sports and crypto.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["sentiment", "social", "twitter", "reddit", "prediction", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}

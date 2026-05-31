@@ -1,0 +1,12 @@
+{
+  "name": "metaculus-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Metaculus crowd forecasting integration for JellyOS — superforecasters, calibration data, and non-sports predictions.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "keywords": ["metaculus", "forecasting", "superforecaster", "prediction", "jelly"],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "vitest": "^1.0.0" }
+}
