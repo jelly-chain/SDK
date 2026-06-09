@@ -1,0 +1,2850 @@
+openapi: 3.1.0
+info:
+  title: Jelly FIFA World Cup API
+  version: 2.0.0
+  description: |
+    Complete FIFA World Cup coverage for 2018, 2022, and 2026 tournaments.
+    Real-time and historical data: teams, matches, standings, player stats,
+    betting odds, shot maps, attack momentum, predictions, and intelligence.
+
+    Authentication via API key in the Authorization header.
+    Cursor-based pagination used on list endpoints (cursor, per_page, max 100).
+    All timestamps in ISO 8601 UTC.
+servers:
+  - url: https://api.jellychain.fun
+    description: Production
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  parameters:
+    SeasonParam:
+      name: season
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum: [2018, 2022, 2026]
+      description: Filter to a specific World Cup edition. Defaults to 2026.
+    SeasonsParam:
+      name: seasons[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+          enum: [2018, 2022, 2026]
+      description: Filter to specific editions. Defaults to current (2026).
+    CursorParam:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Cursor for the next page of results.
+    PerPageParam:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Results per page (max 100).
+    MatchIdsParam:
+      name: match_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      description: Filter to specific match IDs.
+    TeamIdsParam:
+      name: team_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      description: Filter to specific team IDs.
+    PlayerIdsParam:
+      name: player_ids[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+      description: Filter to specific player IDs.
+    SearchParam:
+      name: search
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Case-insensitive substring match on name.
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        next_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the next page.
+        prev_cursor:
+          type: integer
+          nullable: true
+          description: Cursor for the previous page.
+        per_page:
+          type: integer
+        total:
+          type: integer
+          description: Total results across all pages (when available).
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+    Season:
+      type: object
+      properties:
+        id:
+          type: integer
+        year:
+          type: integer
+          enum: [2018, 2022, 2026]
+        host_countries:
+          type: array
+          items:
+            type: string
+        teams_count:
+          type: integer
+        matches_count:
+          type: integer
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+    Tournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          $ref: '#/components/schemas/Season'
+        name:
+          type: string
+        type:
+          type: string
+          enum: [world_cup, club_world_cup, womens_world_cup]
+        status:
+          type: string
+          enum: [upcoming, in_progress, completed]
+    Team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Full country name
+        abbreviation:
+          type: string
+          nullable: true
+          description: Three-letter code (USA, BRA, GER)
+        country_code:
+          type: string
+          nullable: true
+          description: ISO country code
+        confederation:
+          type: string
+          nullable: true
+          enum: [UEFA, CONMEBOL, CONCACAF, CAF, AFC, OFC]
+        fifa_ranking:
+          type: integer
+          nullable: true
+        group_code:
+          type: string
+          nullable: true
+        season:
+          $ref: '#/components/schemas/Season'
+    Stadium:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        city:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        capacity:
+          type: integer
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        season:
+          $ref: '#/components/schemas/Season'
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Group letter (A, B, C, ...)
+        season:
+          $ref: '#/components/schemas/Season'
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+    Standing:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          $ref: '#/components/schemas/Season'
+        team:
+          $ref: '#/components/schemas/Team'
+        group:
+          $ref: '#/components/schemas/Group'
+        position:
+          type: integer
+        played:
+          type: integer
+        won:
+          type: integer
+        drawn:
+          type: integer
+        lost:
+          type: integer
+        goals_for:
+          type: integer
+        goals_against:
+          type: integer
+        goal_difference:
+          type: integer
+        points:
+          type: integer
+        form:
+          type: string
+          nullable: true
+          description: Recent results string (e.g. "WWDLW")
+    Stage:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: Stage name (Group Stage, Round of 16, Quarter-final, Semi-final, Final, Third Place)
+        order:
+          type: integer
+    Referee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        country_code:
+          type: string
+          nullable: true
+    Manager:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        nationality:
+          type: string
+          nullable: true
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date-time
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        height_cm:
+          type: integer
+          nullable: true
+        jersey_number:
+          type: string
+          nullable: true
+        team:
+          $ref: '#/components/schemas/Team'
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_number:
+          type: integer
+          nullable: true
+        datetime:
+          type: string
+          format: date-time
+          description: UTC kickoff
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, postponed, cancelled]
+        season:
+          $ref: '#/components/schemas/Season'
+        stage:
+          $ref: '#/components/schemas/Stage'
+        group:
+          $ref: '#/components/schemas/Group'
+          nullable: true
+        stadium:
+          $ref: '#/components/schemas/Stadium'
+          nullable: true
+        home_team:
+          $ref: '#/components/schemas/Team'
+          nullable: true
+        away_team:
+          $ref: '#/components/schemas/Team'
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        home_score_penalties:
+          type: integer
+          nullable: true
+        away_score_penalties:
+          type: integer
+          nullable: true
+        first_half_home_score:
+          type: integer
+          nullable: true
+        first_half_away_score:
+          type: integer
+          nullable: true
+        has_extra_time:
+          type: boolean
+          nullable: true
+        has_penalty_shootout:
+          type: boolean
+          nullable: true
+        round_name:
+          type: string
+          nullable: true
+        home_formation:
+          type: string
+          nullable: true
+        away_formation:
+          type: string
+          nullable: true
+        referee:
+          $ref: '#/components/schemas/Referee'
+          nullable: true
+        home_manager:
+          $ref: '#/components/schemas/Manager'
+          nullable: true
+        away_manager:
+          $ref: '#/components/schemas/Manager'
+          nullable: true
+        attendance:
+          type: integer
+          nullable: true
+    MatchEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        incident_type:
+          type: string
+          enum: [goal, card, substitution, period, injury_time, penalty_shootout]
+        incident_class:
+          type: string
+          nullable: true
+          description: goal, own_goal, penalty, yellow_card, red_card, second_yellow
+        time_minute:
+          type: integer
+          nullable: true
+        added_time:
+          type: integer
+          nullable: true
+        period:
+          type: string
+          nullable: true
+          enum: [first_half, second_half, extra_first, extra_second, penalties]
+        is_home:
+          type: boolean
+          nullable: true
+        player:
+          $ref: '#/components/schemas/Player'
+          nullable: true
+        assist_player:
+          $ref: '#/components/schemas/Player'
+          nullable: true
+        player_in:
+          $ref: '#/components/schemas/Player'
+          nullable: true
+        player_out:
+          $ref: '#/components/schemas/Player'
+          nullable: true
+        home_score:
+          type: integer
+          nullable: true
+        away_score:
+          type: integer
+          nullable: true
+        rescinded:
+          type: boolean
+          nullable: true
+    LineupEntry:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        is_starter:
+          type: boolean
+        is_substitute:
+          type: boolean
+        shirt_number:
+          type: integer
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        formation_place:
+          type: integer
+          nullable: true
+          description: Position in formation (1-11 for starters)
+    RosterEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        season:
+          $ref: '#/components/schemas/Season'
+        team:
+          $ref: '#/components/schemas/Team'
+        player:
+          $ref: '#/components/schemas/Player'
+        position:
+          type: string
+          nullable: true
+        appearances:
+          type: integer
+        starts:
+          type: integer
+        minutes_played:
+          type: integer
+        goals:
+          type: integer
+        assists:
+          type: integer
+        yellow_cards:
+          type: integer
+        red_cards:
+          type: integer
+        avg_rating:
+          type: number
+          nullable: true
+    PlayerMatchStat:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        rating:
+          type: number
+          nullable: true
+        minutes_played:
+          type: integer
+          nullable: true
+        expected_goals:
+          type: number
+          nullable: true
+        expected_assists:
+          type: number
+          nullable: true
+        goals:
+          type: integer
+          nullable: true
+        assists:
+          type: integer
+          nullable: true
+        shots:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        passes_total:
+          type: integer
+          nullable: true
+        passes_accurate:
+          type: integer
+          nullable: true
+        key_passes:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        blocked_shots:
+          type: integer
+          nullable: true
+        duels_won:
+          type: integer
+          nullable: true
+        fouls_committed:
+          type: integer
+          nullable: true
+        was_fouled:
+          type: integer
+          nullable: true
+        touches:
+          type: integer
+          nullable: true
+        possession_lost:
+          type: integer
+          nullable: true
+        ball_recoveries:
+          type: integer
+          nullable: true
+        big_chances_created:
+          type: integer
+          nullable: true
+        big_chances_missed:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        saves_inside_box:
+          type: integer
+          nullable: true
+        punches:
+          type: integer
+          nullable: true
+        high_claims:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        dribbles_attempted:
+          type: integer
+          nullable: true
+    TeamMatchStat:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        possession_pct:
+          type: integer
+          nullable: true
+        expected_goals:
+          type: number
+          nullable: true
+        big_chances:
+          type: integer
+          nullable: true
+        shots_total:
+          type: integer
+          nullable: true
+        shots_on_target:
+          type: integer
+          nullable: true
+        shots_off_target:
+          type: integer
+          nullable: true
+        shots_blocked:
+          type: integer
+          nullable: true
+        shots_inside_box:
+          type: integer
+          nullable: true
+        shots_outside_box:
+          type: integer
+          nullable: true
+        hit_woodwork:
+          type: integer
+          nullable: true
+        corners:
+          type: integer
+          nullable: true
+        offsides:
+          type: integer
+          nullable: true
+        fouls:
+          type: integer
+          nullable: true
+        yellow_cards:
+          type: integer
+          nullable: true
+        red_cards:
+          type: integer
+          nullable: true
+        passes_total:
+          type: integer
+          nullable: true
+        passes_accurate:
+          type: integer
+          nullable: true
+        passes_final_third:
+          type: integer
+          nullable: true
+        tackles:
+          type: integer
+          nullable: true
+        interceptions:
+          type: integer
+          nullable: true
+        clearances:
+          type: integer
+          nullable: true
+        saves:
+          type: integer
+          nullable: true
+        ground_duels_won:
+          type: integer
+          nullable: true
+        aerial_duels_won:
+          type: integer
+          nullable: true
+        dribbles_completed:
+          type: integer
+          nullable: true
+        throw_ins:
+          type: integer
+          nullable: true
+        goal_kicks:
+          type: integer
+          nullable: true
+        free_kicks:
+          type: integer
+          nullable: true
+    ShotEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        shot_type:
+          type: string
+          enum: [goal, save, miss, block, post]
+        situation:
+          type: string
+          nullable: true
+          enum: [open_play, set_piece, corner, free_kick, penalty, counter_attack]
+        body_part:
+          type: string
+          nullable: true
+          enum: [right_foot, left_foot, head, other]
+        goal_type:
+          type: string
+          nullable: true
+          enum: [open_play, penalty, free_kick, own_goal, header, tap_in, long_range]
+        xg:
+          type: number
+          nullable: true
+        xgot:
+          type: number
+          nullable: true
+        player_x:
+          type: number
+          nullable: true
+        player_y:
+          type: number
+          nullable: true
+        goal_mouth_x:
+          type: number
+          nullable: true
+        goal_mouth_y:
+          type: number
+          nullable: true
+        time_minute:
+          type: integer
+        added_time:
+          type: integer
+          nullable: true
+        time_seconds:
+          type: integer
+          nullable: true
+    MomentumPoint:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        minute:
+          type: number
+        value:
+          type: number
+          description: Attack momentum value (-100 to 100, negative = away advantage)
+    BestPlayerEntry:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        side_rank:
+          type: integer
+          description: Ranking within the side (1-11)
+        is_man_of_match:
+          type: boolean
+        rating:
+          type: number
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+    AvgPosition:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        avg_x:
+          type: number
+        avg_y:
+          type: number
+    TeamFormEntry:
+      type: object
+      properties:
+        match_id:
+          type: integer
+        team:
+          $ref: '#/components/schemas/Team'
+        is_home:
+          type: boolean
+        avg_rating:
+          type: number
+          nullable: true
+        position:
+          type: integer
+          nullable: true
+        form_string:
+          type: string
+          nullable: true
+          description: Recent match points as digits (e.g. "33313")
+    BettingOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        vendor:
+          type: string
+          enum: [betmgm, betrivers, caesars, draftkings, fanatics, fanduel]
+        moneyline_home_odds:
+          type: integer
+          nullable: true
+        moneyline_away_odds:
+          type: integer
+          nullable: true
+        moneyline_draw_odds:
+          type: integer
+          nullable: true
+        spread_home_value:
+          type: string
+          nullable: true
+        spread_home_odds:
+          type: integer
+          nullable: true
+        spread_away_value:
+          type: string
+          nullable: true
+        spread_away_odds:
+          type: integer
+          nullable: true
+        total_value:
+          type: string
+          nullable: true
+        total_over_odds:
+          type: integer
+          nullable: true
+        total_under_odds:
+          type: integer
+          nullable: true
+        markets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BettingMarket'
+        updated_at:
+          type: string
+          format: date-time
+    BettingMarket:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [moneyline, spread, total, team_total, correct_score, double_chance, draw_no_bet, both_teams_to_score, result_combo, margin, timing, other]
+        period:
+          type: string
+          enum: [match, first_half, second_half, other]
+        scope:
+          type: string
+          enum: [match, home_team, away_team, both_teams, other]
+        outcomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/MarketOutcome'
+    MarketOutcome:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [home, away, draw, over, under, yes, no, score, margin, double_chance, other]
+        american_odds:
+          type: integer
+          nullable: true
+        decimal_odds:
+          type: number
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+    FuturesOdd:
+      type: object
+      properties:
+        id:
+          type: integer
+        market_type:
+          type: string
+        market_name:
+          type: string
+        team:
+          $ref: '#/components/schemas/Team'
+        vendor:
+          type: string
+        american_odds:
+          type: integer
+          nullable: true
+        decimal_odds:
+          type: number
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    PlayerProp:
+      type: object
+      properties:
+        id:
+          type: integer
+        match_id:
+          type: integer
+        player:
+          $ref: '#/components/schemas/Player'
+        vendor:
+          type: string
+          enum: [betmgm, betrivers, caesars, draftkings, fanatics, fanduel]
+        prop_type:
+          type: string
+          enum: [anytime_goal, assists, card, first_goal, goal_or_assist, last_goal, red_card, saves, shot_each_half, shot_on_target_each_half, shots, shots_on_target, tackles]
+        line_value:
+          type: string
+        market_type:
+          type: string
+          enum: [milestone, over_under]
+        odds:
+          type: integer
+          nullable: true
+          description: American odds (milestone markets)
+        over_odds:
+          type: integer
+          nullable: true
+          description: American odds for over (over_under markets)
+        under_odds:
+          type: integer
+          nullable: true
+          description: American odds for under (over_under markets)
+        updated_at:
+          type: string
+          format: date-time
+    LineMovementPoint:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        vendor:
+          type: string
+        moneyline_home:
+          type: integer
+          nullable: true
+        moneyline_away:
+          type: integer
+          nullable: true
+        moneyline_draw:
+          type: integer
+          nullable: true
+        spread_home:
+          type: string
+          nullable: true
+        spread_away:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: string
+        match_id:
+          type: integer
+          nullable: true
+        group_code:
+          type: string
+          nullable: true
+        tournament_id:
+          type: integer
+          nullable: true
+        type:
+          type: string
+          enum: [match_winner, group_winner, qualification, tournament_winner, top_scorer]
+        home_win_probability:
+          type: number
+          nullable: true
+        draw_probability:
+          type: number
+          nullable: true
+        away_win_probability:
+          type: number
+          nullable: true
+        predicted_winner:
+          type: string
+          nullable: true
+        confidence:
+          type: number
+          description: Overall confidence score 0-1
+        factors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              impact:
+                type: string
+                enum: [positive, negative, neutral]
+              weight:
+                type: number
+              description:
+                type: string
+        risk_flags:
+          type: array
+          items:
+            type: string
+        generated_at:
+          type: string
+          format: date-time
+    QualificationPath:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/Team'
+        group:
+          $ref: '#/components/schemas/Group'
+        current_position:
+          type: integer
+        points:
+          type: integer
+        matches_remaining:
+          type: integer
+        scenarios:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+              conditions:
+                type: array
+                items:
+                  type: string
+              probability:
+                type: number
+        elimination_risk:
+          type: string
+          enum: [none, low, medium, high, eliminated]
+    CompositeMatchSummary:
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/Match'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchEvent'
+        home_lineup:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineupEntry'
+        away_lineup:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineupEntry'
+        home_stats:
+          $ref: '#/components/schemas/TeamMatchStat'
+        away_stats:
+          $ref: '#/components/schemas/TeamMatchStat'
+        best_players:
+          type: array
+          items:
+            $ref: '#/components/schemas/BestPlayerEntry'
+        man_of_the_match:
+          $ref: '#/components/schemas/BestPlayerEntry'
+    Vendor:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        display_name:
+          type: string
+        active:
+          type: boolean
+  responses:
+    UnauthorizedError:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequestError:
+      description: Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+security:
+  - ApiKeyAuth: []
+paths:
+  # ─── SEASONS ───────────────────────────────────────────────────────────────
+  /v1/fifa/seasons:
+    get:
+      operationId: listSeasons
+      summary: List all FIFA World Cup seasons
+      description: Returns every available World Cup edition with metadata.
+      tags:
+        - Seasons
+      responses:
+        '200':
+          description: List of seasons
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Season'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/seasons/{year}:
+    get:
+      operationId: getSeason
+      summary: Get a single World Cup season
+      description: Metadata and statistics for a specific tournament edition.
+      tags:
+        - Seasons
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum: [2018, 2022, 2026]
+      responses:
+        '200':
+          description: Season details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Season'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/seasons/{year}/tournaments:
+    get:
+      operationId: getSeasonTournaments
+      summary: Tournaments in a season
+      description: All tournaments within a given World Cup season (main + parallel competitions).
+      tags:
+        - Seasons
+        - Tournaments
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum: [2018, 2022, 2026]
+      responses:
+        '200':
+          description: Tournament list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tournament'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── TEAMS ──────────────────────────────────────────────────────────────────
+  /v1/fifa/teams:
+    get:
+      operationId: listTeams
+      summary: List FIFA World Cup teams
+      description: All participating nations, optionally filtered by season.
+      tags:
+        - Teams
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+      responses:
+        '200':
+          description: Team list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/teams/{id}:
+    get:
+      operationId: getTeam
+      summary: Get a single team
+      description: Full team profile including federation, ranking, and group assignment.
+      tags:
+        - Teams
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Team profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Team'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/teams/{id}/roster:
+    get:
+      operationId: getTeamRoster
+      summary: Get team roster for a season
+      description: Full tournament squad with cumulative stats for each player.
+      tags:
+        - Teams
+        - Rosters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Team roster
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RosterEntry'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/teams/{id}/form:
+    get:
+      operationId: getTeamForm
+      summary: Get team form history
+      description: Recent match results, form rating, and trend analysis.
+      tags:
+        - Teams
+        - Intelligence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: window
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+          description: Number of recent matches to include
+      responses:
+        '200':
+          description: Team form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      team:
+                        $ref: '#/components/schemas/Team'
+                      window:
+                        type: integer
+                      results:
+                        type: array
+                        items:
+                          type: string
+                          enum: [W, D, L]
+                      goals_scored:
+                        type: integer
+                      goals_conceded:
+                        type: integer
+                      form_rating:
+                        type: number
+                      trend:
+                        type: string
+                        enum: [improving, stable, declining]
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/teams/{id}/matches:
+    get:
+      operationId: getTeamMatches
+      summary: Get all matches for a team
+      description: Full fixture and result history for a specific team across a season.
+      tags:
+        - Teams
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Team matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Match'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+
+  # ─── STADIUMS ──────────────────────────────────────────────────────────────
+  /v1/fifa/stadiums:
+    get:
+      operationId: listStadiums
+      summary: List all host stadiums
+      description: Stadiums used across all World Cup editions, optionally filtered.
+      tags:
+        - Stadiums
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+      responses:
+        '200':
+          description: Stadium list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Stadium'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/stadiums/{id}:
+    get:
+      operationId: getStadium
+      summary: Get a single stadium
+      description: Stadium profile with location, capacity, and tournament history.
+      tags:
+        - Stadiums
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stadium details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Stadium'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/seasons/{year}/stadiums:
+    get:
+      operationId: getSeasonStadiums
+      summary: Stadiums used in a specific World Cup
+      description: All host venues for a given tournament edition.
+      tags:
+        - Stadiums
+        - Seasons
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum: [2018, 2022, 2026]
+      responses:
+        '200':
+          description: Season stadiums
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Stadium'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── GROUPS ────────────────────────────────────────────────────────────────
+  /v1/fifa/groups:
+    get:
+      operationId: listGroups
+      summary: List all groups for a season
+      description: Groups and their assigned teams for a given World Cup edition.
+      tags:
+        - Groups
+      parameters:
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Group list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/groups/{code}:
+    get:
+      operationId: getGroup
+      summary: Get a single group
+      description: Group details with team assignments.
+      tags:
+        - Groups
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-H]$'
+          description: Group letter (A-H)
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Group details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/groups/{code}/standings:
+    get:
+      operationId: getGroupStandings
+      summary: Group standings table
+      description: Full group table with position, points, and form.
+      tags:
+        - Groups
+        - Standings
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-H]$'
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Group standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Standing'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ─── STANDINGS ─────────────────────────────────────────────────────────────
+  /v1/fifa/standings:
+    get:
+      operationId: listAllStandings
+      summary: All group standings
+      description: Every group table for a given season in a single response.
+      tags:
+        - Standings
+      parameters:
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: All standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Standing'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/standings/group/{code}:
+    get:
+      operationId: getStandingsByGroup
+      summary: Standings for a specific group
+      description: Sorted group table for a specific group code.
+      tags:
+        - Standings
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-H]$'
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Group standings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Standing'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/teams/{id}/standings:
+    get:
+      operationId: getTeamStanding
+      summary: A team's current standing
+      description: Where a specific team sits in their group table.
+      tags:
+        - Standings
+        - Teams
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Team standing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Standing'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/standings/tiebreak:
+    get:
+      operationId: getTiebreakScenarios
+      summary: Tiebreak scenarios
+      description: Possible tiebreak resolutions for groups where positions are level on points.
+      tags:
+        - Standings
+        - Intelligence
+      parameters:
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Tiebreak analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        group_code:
+                          type: string
+                        tied_teams:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Team'
+                        tiebreaker:
+                          type: string
+                          description: Tiebreaker rule being applied
+                        resolved_order:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Team'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── MATCHES ───────────────────────────────────────────────────────────────
+  /v1/fifa/matches:
+    get:
+      operationId: listMatches
+      summary: List FIFA World Cup matches
+      description: Cursor-paginated match list with full filtering.
+      tags:
+        - Matches
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+        - $ref: '#/components/parameters/MatchIdsParam'
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [scheduled, in_progress, completed, postponed, cancelled]
+        - name: stage_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Match'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}:
+    get:
+      operationId: getMatch
+      summary: Get a single match
+      description: Full match details including score, managers, formations, and referees.
+      tags:
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Match'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/matches/{id}/events:
+    get:
+      operationId: getMatchEvents
+      summary: Get match events
+      description: Time-ordered match incidents — goals, cards, substitutions, shootouts.
+      tags:
+        - Matches
+        - Events
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Match events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MatchEvent'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/matches/{id}/lineups:
+    get:
+      operationId: getMatchLineups
+      summary: Get match lineups
+      description: Registered match-day squads with starters, substitutes, and formations.
+      tags:
+        - Matches
+        - Lineups
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match lineups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LineupEntry'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/matches/{id}/form:
+    get:
+      operationId: getMatchTeamForm
+      summary: Pre-match team form
+      description: Recent form summary for both teams ahead of a match.
+      tags:
+        - Matches
+        - Intelligence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pre-match form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamFormEntry'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/matches/{id}/summary:
+    get:
+      operationId: getMatchSummary
+      summary: Composite match summary
+      description: Everything for a match — events, lineups, stats, best players — in one response.
+      tags:
+        - Matches
+        - Composite
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Composite match summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CompositeMatchSummary'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ─── PLAYERS ───────────────────────────────────────────────────────────────
+  /v1/fifa/players:
+    get:
+      operationId: listPlayers
+      summary: List FIFA World Cup players
+      description: All players across every edition, with search and team filtering.
+      tags:
+        - Players
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Player list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Player'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/players/{id}:
+    get:
+      operationId: getPlayer
+      summary: Get a single player
+      description: Biographical profile for a World Cup player.
+      tags:
+        - Players
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Player profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Player'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/players/{id}/stats:
+    get:
+      operationId: getPlayerStats
+      summary: Get player tournament/career stats
+      description: Cumulative stats across all World Cup appearances for a player.
+      tags:
+        - Players
+        - Stats
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Player stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      player:
+                        $ref: '#/components/schemas/Player'
+                      seasons:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            season:
+                              $ref: '#/components/schemas/Season'
+                            appearances:
+                              type: integer
+                            goals:
+                              type: integer
+                            assists:
+                              type: integer
+                            minutes_played:
+                              type: integer
+                            yellow_cards:
+                              type: integer
+                            red_cards:
+                              type: integer
+                            avg_rating:
+                              type: number
+                              nullable: true
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/players/{id}/matches:
+    get:
+      operationId: getPlayerMatches
+      summary: Get matches a player appeared in
+      description: Every match a player has played in, with match context.
+      tags:
+        - Players
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Player matches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        match:
+                          $ref: '#/components/schemas/Match'
+                        minutes_played:
+                          type: integer
+                          nullable: true
+                        rating:
+                          type: number
+                          nullable: true
+                        goals:
+                          type: integer
+                          nullable: true
+                        assists:
+                          type: integer
+                          nullable: true
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── ROSTERS ───────────────────────────────────────────────────────────────
+  /v1/fifa/rosters:
+    get:
+      operationId: listRosters
+      summary: List all tournament rosters
+      description: All squad entries across teams and seasons.
+      tags:
+        - Rosters
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/PlayerIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Roster entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RosterEntry'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/seasons/{year}/rosters:
+    get:
+      operationId: getSeasonRosters
+      summary: All rosters for a specific season
+      description: Every squad entry for a single World Cup edition.
+      tags:
+        - Rosters
+        - Seasons
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum: [2018, 2022, 2026]
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Season rosters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RosterEntry'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── MATCH STATS ───────────────────────────────────────────────────────────
+  /v1/fifa/matches/{id}/player-stats:
+    get:
+      operationId: getMatchPlayerStats
+      summary: Per-player match statistics
+      description: Individual performance data for every player in a match.
+      tags:
+        - Match Stats
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/PlayerIdsParam'
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Player match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerMatchStat'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/team-stats:
+    get:
+      operationId: getMatchTeamStats
+      summary: Team-level match statistics
+      description: Aggregate stats for both sides in a match.
+      tags:
+        - Match Stats
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Team match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMatchStat'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/shots:
+    get:
+      operationId: getMatchShots
+      summary: Shot map for a match
+      description: Every shot with xG, xGoT, and pitch coordinates.
+      tags:
+        - Match Stats
+        - Shots
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/PlayerIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Shot entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ShotEntry'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/momentum:
+    get:
+      operationId: getMatchMomentum
+      summary: Attack momentum timeline
+      description: Per-minute attack momentum values showing which team is on the front foot.
+      tags:
+        - Match Stats
+        - Momentum
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Momentum points
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MomentumPoint'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/best-players:
+    get:
+      operationId: getMatchBestPlayers
+      summary: Best XI and Man of the Match
+      description: Top-rated players per side and the overall Man of the Match.
+      tags:
+        - Match Stats
+        - Best Players
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Best player entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BestPlayerEntry'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/avg-positions:
+    get:
+      operationId: getMatchAvgPositions
+      summary: Player average positions
+      description: Heatmap centroids — each player's average pitch position for the match.
+      tags:
+        - Match Stats
+        - Positions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/TeamIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Average positions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AvgPosition'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/players/{id}/match-stats:
+    get:
+      operationId: getPlayerMatchStats
+      summary: Player's per-match performance stats
+      description: Individual game-by-game stats for a specific player.
+      tags:
+        - Match Stats
+        - Players
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Per-match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerMatchStat'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/teams/{id}/match-stats:
+    get:
+      operationId: getTeamMatchStats
+      summary: Team's per-match aggregate stats
+      description: Game-by-game team-level statistics for a specific team.
+      tags:
+        - Match Stats
+        - Teams
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Team match stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMatchStat'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── BETTING ODDS ──────────────────────────────────────────────────────────
+  /v1/fifa/odds:
+    get:
+      operationId: listOdds
+      summary: List match betting odds
+      description: Moneyline, spread, total, and expanded markets for all matches.
+      tags:
+        - Odds
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+        - $ref: '#/components/parameters/MatchIdsParam'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Match odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BettingOdd'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/odds:
+    get:
+      operationId: getMatchOdds
+      summary: Odds for a specific match
+      description: All betting lines for a single match across all vendors.
+      tags:
+        - Odds
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BettingOdd'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/odds/futures:
+    get:
+      operationId: listFuturesOdds
+      summary: Tournament futures odds
+      description: Outright winner, top scorer, group winner, and qualification odds.
+      tags:
+        - Odds
+        - Futures
+      parameters:
+        - $ref: '#/components/parameters/SeasonsParam'
+      responses:
+        '200':
+          description: Futures odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FuturesOdd'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/odds/player-props:
+    get:
+      operationId: listPlayerProps
+      summary: Player prop betting odds
+      description: Anytime goal, shots, assists, cards, and other player-specific props.
+      tags:
+        - Odds
+        - Player Props
+      parameters:
+        - name: match_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [anytime_goal, assists, card, first_goal, goal_or_assist, last_goal, red_card, saves, shot_each_half, shot_on_target_each_half, shots, shots_on_target, tackles]
+        - name: vendors[]
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [betmgm, betrivers, caesars, draftkings, fanatics, fanduel]
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: Player props
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerProp'
+                  meta:
+                    type: object
+                    properties:
+                      per_page:
+                        type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/matches/{id}/player-props:
+    get:
+      operationId: getMatchPlayerProps
+      summary: Player props for a specific match
+      description: All player prop markets available for a match.
+      tags:
+        - Odds
+        - Player Props
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: player_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: prop_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [anytime_goal, assists, card, first_goal, goal_or_assist, last_goal, red_card, saves, shot_each_half, shot_on_target_each_half, shots, shots_on_target, tackles]
+      responses:
+        '200':
+          description: Match player props
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerProp'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/odds/vendors:
+    get:
+      operationId: listVendors
+      summary: Available sportsbook vendors
+      description: List of all sportsbooks with odds data in the system.
+      tags:
+        - Odds
+        - Vendors
+      responses:
+        '200':
+          description: Vendor list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vendor'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/odds/{vendor}/matches/{matchId}:
+    get:
+      operationId: getOddsByVendor
+      summary: Odds from a specific vendor for a match
+      description: Full betting lines for a single match from one sportsbook.
+      tags:
+        - Odds
+        - Vendors
+      parameters:
+        - name: vendor
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [betmgm, betrivers, caesars, draftkings, fanatics, fanduel]
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vendor odds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BettingOdd'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/matches/{id}/odds/line-movement:
+    get:
+      operationId: getLineMovement
+      summary: Line movement history for a match
+      description: Historical odds snapshots showing how lines have moved over time.
+      tags:
+        - Odds
+        - Line Movement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: vendor
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [betmgm, betrivers, caesars, draftkings, fanatics, fanduel]
+      responses:
+        '200':
+          description: Line movement data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LineMovementPoint'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ─── INTELLIGENCE & PREDICTION ────────────────────────────────────────────
+  /v1/fifa/matches/{id}/prediction:
+    get:
+      operationId: getMatchPrediction
+      summary: Match outcome prediction
+      description: Model-driven win/draw/loss probabilities with contributing factors.
+      tags:
+        - Prediction
+        - Intelligence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match prediction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Prediction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/groups/{code}/prediction:
+    get:
+      operationId: getGroupPrediction
+      summary: Group qualification prediction
+      description: Probability that each team advances from the group, with scenarios.
+      tags:
+        - Prediction
+        - Intelligence
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-H]$'
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Group prediction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Prediction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/teams/{id}/qualification-path:
+    get:
+      operationId: getTeamQualificationPath
+      summary: Qualification path scenarios
+      description: What a team needs to advance — remaining matches, tiebreak scenarios, elimination risk.
+      tags:
+        - Prediction
+        - Intelligence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Qualification path
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/QualificationPath'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/tournaments/{id}/prediction:
+    get:
+      operationId: getTournamentWinnerPrediction
+      summary: Tournament winner prediction
+      description: Full tournament winner probabilities with bracket-path analysis.
+      tags:
+        - Prediction
+        - Tournaments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tournament prediction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Prediction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ─── BRACKET / TOURNAMENT ─────────────────────────────────────────────────
+  /v1/fifa/tournaments:
+    get:
+      operationId: listTournaments
+      summary: List tournaments
+      description: All available tournaments across seasons.
+      tags:
+        - Tournaments
+      parameters:
+        - $ref: '#/components/parameters/SeasonParam'
+      responses:
+        '200':
+          description: Tournament list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tournament'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /v1/fifa/tournaments/{id}:
+    get:
+      operationId: getTournament
+      summary: Get tournament details
+      description: Full tournament profile with participating teams and stage structure.
+      tags:
+        - Tournaments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tournament details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Tournament'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/tournaments/{id}/bracket:
+    get:
+      operationId: getTournamentBracket
+      summary: Tournament bracket
+      description: Full knockout bracket with matchups, results, and progression paths.
+      tags:
+        - Tournaments
+        - Bracket
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tournament bracket
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      tournament:
+                        $ref: '#/components/schemas/Tournament'
+                      rounds:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            stage:
+                              $ref: '#/components/schemas/Stage'
+                            matches:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/Match'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /v1/fifa/tournaments/{id}/schedule:
+    get:
+      operationId: getTournamentSchedule
+      summary: Full tournament schedule
+      description: Complete match schedule for a tournament, ordered by date.
+      tags:
+        - Tournaments
+        - Matches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      responses:
+        '200':
+          description: Tournament schedule
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Match'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'

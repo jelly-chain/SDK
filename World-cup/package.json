@@ -1,0 +1,80 @@
+{
+  "name": "world-cup-jelly-sdk",
+  "version": "1.0.0",
+  "description": "Comprehensive FIFA World Cup SDK for agents and humans — 50+ API endpoints, betting odds, player stats, shot maps, predictions, and intelligence. Powered by api.jellychain.fun.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sdk": "./src/sdk.ts",
+    "./client": "./src/providers/jelly-api/client.ts",
+    "./adapter": "./src/providers/jelly-api/adapter.ts",
+    "./types": "./src/types.ts",
+    "./config": "./src/config.ts",
+    "./agents": "./src/agents/index.ts",
+    "./tools": "./src/agents/tools/index.ts",
+    "./intelligence": "./src/fifa/intelligence/index.ts",
+    "./prediction": "./src/fifa/prediction/index.ts",
+    "./markets": "./src/markets/index.ts",
+    "./schemas": "./src/schemas/index.ts",
+    "./utils": "./src/utils/index.ts",
+    "./cache": "./src/cache/index.ts",
+    "./errors": "./src/errors.ts",
+    "./logger": "./src/logger.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ --ext .ts",
+    "docs": "typedoc --out docs/api src/index.ts",
+    "example:basic": "npx tsx examples/basic/index.ts",
+    "example:betting": "npx tsx examples/betting/index.ts",
+    "example:agents": "npx tsx examples/agents/index.ts",
+    "example:backtest": "npx tsx examples/backtesting/index.ts",
+    "example:multi-season": "npx tsx examples/multi-season/index.ts"
+  },
+  "keywords": [
+    "fifa",
+    "world-cup",
+    "football",
+    "soccer",
+    "betting",
+    "odds",
+    "prediction",
+    "polymarket",
+    "kalshi",
+    "agent",
+    "sdk",
+    "jelly",
+    "jellychain",
+    "sports-analytics",
+    "shot-map",
+    "expected-goals",
+    "xg",
+    "player-props",
+    "futures",
+    "intelligence"
+  ],
+  "author": "jelly-chain",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "typedoc": "^0.25.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
