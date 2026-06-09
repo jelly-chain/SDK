@@ -1,0 +1,2 @@
+import { BatchTx, GasEstimate } from "./types.js";
+export class BatchBundler { private txs: BatchTx[] = []; add(tx: BatchTx): void { this.txs.push(tx); } getBatch(): BatchTx[] { return [...this.txs]; } clear(): void { this.txs = []; } estimateBatchGas(): GasEstimate { const baseGas = 21000; const perTx = 10000; const total = baseGas + perTx * this.txs.length; return { gasLimit: total.toString(), maxFeePerGas: "30000000000", maxPriorityFeePerGas: "1500000000", estimatedCostUsd: 0, confidence: 0.7 }; } }
