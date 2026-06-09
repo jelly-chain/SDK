@@ -1,0 +1,1 @@
+export { SentimentAnalyzer } from "./analyzer.js"; export { TrendDetector } from "./trends.js"; export { XCollector } from "./collectors/x.js"; export { RedditCollector } from "./collectors/reddit.js"; export type { Platform, SentimentScore, AggregatedSentiment, TrendData } from "./types.js";
