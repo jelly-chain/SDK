@@ -1,0 +1,2 @@
+import { HarvestResult } from "./types.js";
+export class Harvester { private queue: { protocol: string; pool: string; priority: number }[] = []; enqueue(protocol: string, pool: string, priority = 1): void { this.queue.push({ protocol, pool, priority }); this.queue.sort((a, b) => b.priority - a.priority); } async processNext(): Promise<HarvestResult | null> { const next = this.queue.shift(); if (!next) return null; return { protocol: next.protocol as any, pool: next.pool, rewards: [], gasUsed: "0" }; } getQueueSize(): number { return this.queue.length; } }
