@@ -1,0 +1,2 @@
+import { AuditReport, SecurityCheck } from "./types.js";
+export class AuditReporter { format(report: AuditReport): string { const statusEmoji = { safe: "✅", warning: "⚠️", danger: "🚨" }; let out = `${statusEmoji[report.overall]} Security Audit: ${report.token}\n`; out += `Chain: ${report.chain} | Score: ${report.score}/100\n`; out += `---\n`; for (const c of report.checks) { out += `${c.passed ? "✅" : "❌"} ${c.name}: ${c.detail} (${c.severity})\n`; } return out; } toJson(report: AuditReport): string { return JSON.stringify(report, null, 2); } }
