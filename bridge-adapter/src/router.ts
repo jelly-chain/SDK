@@ -1,0 +1,2 @@
+import { BridgeQuote, BridgeName } from "./types.js";
+export class BridgeRouter { async getBestQuote(bridges: BridgeQuote[]): Promise<BridgeQuote | null> { if (bridges.length === 0) return null; return bridges.reduce((best, cur) => BigInt(cur.amountOut) > BigInt(best.amountOut) ? cur : best); } async getAllQuotes(fromChain: string, toChain: string, token: string, amount: string): Promise<BridgeQuote[]> { return []; } }

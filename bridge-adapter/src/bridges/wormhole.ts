@@ -1,0 +1,2 @@
+import { BridgeQuote, BridgeTx } from "../types.js";
+export class WormholeBridge { async getQuote(fromChain: string, toChain: string, token: string, amount: string): Promise<BridgeQuote> { return { bridge: "wormhole", fromChain, toChain, token, amountIn: amount, amountOut: amount, fee: "0", estimatedTimeMs: 900000 }; } async execute(_quote: BridgeQuote): Promise<BridgeTx> { return { bridge: "wormhole", txHash: "0x", fromChain: "", toChain: "", status: "pending" }; } }

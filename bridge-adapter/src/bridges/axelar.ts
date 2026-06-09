@@ -1,0 +1,2 @@
+import { BridgeQuote, BridgeTx } from "../types.js";
+export class AxelarBridge { async getQuote(fromChain: string, toChain: string, token: string, amount: string): Promise<BridgeQuote> { return { bridge: "axelar", fromChain, toChain, token, amountIn: amount, amountOut: amount, fee: "0", estimatedTimeMs: 600000 }; } async execute(_quote: BridgeQuote): Promise<BridgeTx> { return { bridge: "axelar", txHash: "0x", fromChain: "", toChain: "", status: "pending" }; } }
