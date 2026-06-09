@@ -1,0 +1,9 @@
+{
+  "name": "@jellychain/order-engine", "version": "1.0.0",
+  "description": "Centralized order management — limit, market, stop-loss, take-profit, OCO, trailing, scale",
+  "main": "dist/index.js", "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "devDependencies": { "typescript": "^5.4.0", "vitest": "^1.6.0", "@types/node": "^20.12.0" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "order-engine" }
+}
