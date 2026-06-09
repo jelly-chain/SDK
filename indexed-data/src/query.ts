@@ -1,0 +1,2 @@
+import { IndexedRecord } from "./types.js";
+export class QueryEngine { constructor(private storage: any) {} async getTransfersByAddress(address: string, chain: string): Promise<IndexedRecord[]> { return []; } async getSwapsByToken(token: string, chain: string): Promise<IndexedRecord[]> { return []; } async getTopTokensByVolume(chain: string, limit = 10): Promise<{ token: string; volume: string }[]> { return []; } }

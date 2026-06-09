@@ -1,0 +1,9 @@
+{
+  "name": "@jellychain/indexed-data", "version": "1.0.0",
+  "description": "On-chain data indexer — transfers, swaps, approvals, blocks with local storage and query layer",
+  "main": "dist/index.js", "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc", "test": "vitest run" },
+  "devDependencies": { "typescript": "^5.4.0", "vitest": "^1.6.0", "@types/node": "^20.12.0" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "indexed-data" }
+}
