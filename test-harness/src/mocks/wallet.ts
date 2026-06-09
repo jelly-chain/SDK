@@ -1,0 +1,1 @@
+export class MockWallet { address = "0x1234567890abcdef1234567890abcdef12345678"; privateKey = "0x" + "00".repeat(31) + "01"; async signTransaction(_tx: unknown): Promise<string> { return "0x" + "ff".repeat(65); } async signMessage(_msg: string): Promise<string> { return "0x" + "aa".repeat(65); } }
