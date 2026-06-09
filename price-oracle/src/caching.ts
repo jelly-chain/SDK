@@ -1,0 +1,2 @@
+import { PriceData } from "./types.js";
+export class PriceCache { private cache: Map<string, { data: PriceData; expiresAt: number }> = new Map(); get(token: string): PriceData | null { const entry = this.cache.get(token); if (!entry) return null; if (Date.now() > entry.expiresAt) { this.cache.delete(token); return null; } return entry.data; } set(token: string, data: PriceData, ttlMs = 30000): void { this.cache.set(token, { data, expiresAt: Date.now() + ttlMs }); } invalidate(token: string): void { this.cache.delete(token); } clear(): void { this.cache.clear(); } }
