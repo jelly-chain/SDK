@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './calibration.js';
+export { ManifoldClient, type ManifoldConfig } from "./manifold.js";
+export type { ManifoldMarket, ManifoldAnswer, ManifoldBet, ManifoldUser } from "./manifold.js";

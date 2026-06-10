@@ -1,1 +1,2 @@
-export { TransferIndexer } from "./indexers/transfers.js"; export { SwapIndexer } from "./indexers/swaps.js"; export { DataStorage } from "./storage.js"; export { QueryEngine } from "./query.js"; export type { IndexerType, IndexerConfig, IndexedRecord } from "./types.js";
+export { IndexedData, type IndexConfig } from "./indexer.js";
+export type { AddressIndex, TransferRecord, BlockSummary } from "./indexer.js";
