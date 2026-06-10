@@ -1,2 +1,1 @@
-export { DexConnector, type DexConfig, DexName, DexChain } from "./connector.js";
-export type { SwapQuote, RouteStep, SwapResult, LiquidityPool } from "./connector.js";
+export { DexConnector, type DexConfig, DexName, DexChain, type SwapQuote, type RouteStep, type SwapResult, type LiquidityPool } from "./connector.js";

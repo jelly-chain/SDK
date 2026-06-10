@@ -1,2 +1,1 @@
-export { BridgeAdapter, type BridgeConfig, BridgeName, BridgeStatus } from "./bridge.js";
-export type { BridgeQuote, BridgeRouteStep, BridgeTransaction } from "./bridge.js";
+export { BridgeAdapter, type BridgeConfig, BridgeName, BridgeStatus, BridgeSecurity, type BridgeQuote, type BridgeRouteStep, type BridgeTransaction, type BridgeLiquidity } from "./bridge.js";
