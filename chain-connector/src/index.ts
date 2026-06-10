@@ -1,10 +1,9 @@
-// chain-connector/src/index.ts
+/**
+ * @jellychain/chain-connector — Unified RPC connector for 20+ blockchain networks
+ */
 
-export { ChainConnector } from './connector.js';
-export { RpcClient } from './rpc.js';
-export { BalanceFetcher } from './balances.js';
-export { buildChainConfigs, DEFAULT_CHAIN_CONFIGS } from './utils.js';
+export { ChainConnector, type ChainConnectorConfig } from "./connector.js";
 export type {
-  ChainId, ChainConfig, RpcEndpoint, ConnectorConfig,
-  Balance, TokenBalance, TransactionRequest, TransactionResult, RpcResponse,
-} from './types.js';
+  BalanceResult, TokenBalanceResult, TransactionResult, LogEntry,
+  EventFilter, GasEstimate, BlockInfo, TraceResult, TokenInfo,
+} from "./connector.js";
