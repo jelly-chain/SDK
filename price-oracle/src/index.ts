@@ -1,1 +1,9 @@
-export { PriceAggregator } from "./aggregator.js"; export { PriceCache } from "./caching.js"; export { BinanceSource } from "./sources/binance.js"; export { CoinGeckoSource } from "./sources/coingecko.js"; export { ChainlinkSource } from "./sources/chainlink.js"; export type { PriceSource, PriceData, AggregatedPrice } from "./types.js";
+/**
+ * @jellychain/price-oracle — Multi-source price feed aggregator
+ */
+
+export { PriceOracle, type PriceOracleConfig } from "./oracle.js";
+export type {
+  PriceSource, PriceSourceType, PriceResult, SourcePrice,
+  TWAPResult, PriceAlert,
+} from "./oracle.js";
