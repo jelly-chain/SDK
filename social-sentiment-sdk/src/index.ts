@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './analyzer.js';
-export * from './detector.js';
+export { SocialSentimentAnalyzer, type SocialSentimentConfig } from "./sentiment.js";
+export type { SentimentPost, SentimentAggregate, VolumeSpike, SentimentShift } from "./sentiment.js";

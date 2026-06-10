@@ -1,2 +1,2 @@
-export * from './types.js';
-export * from './client.js';
+export { EspnLive } from "./espn.js";
+export type { EspnSport, EspnGame, EspnTeam, EspnStanding, EspnSchedule } from "./espn.js";

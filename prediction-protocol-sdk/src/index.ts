@@ -1,4 +1,2 @@
-export * from './types.js';
-export * from './gnosis.js';
-export * from './augur.js';
-export * from './settlement.js';
+export { PredictionProtocol, type ProtocolConfig, ProtocolName } from "./protocol.js";
+export type { PredictionMarket, OutcomeData, Position, SettlementResult } from "./protocol.js";
