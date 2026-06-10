@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.code-workspace
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+*.pid
+data/
+tmp/
+sessions/
+cache/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Screenshots
+Screenshot*.png
+**/Screenshot*.png
+
+# Lock files (keep for reproducible builds)
+# package-lock.json
+
+# Root-level junk
+*.tmp
+*.swp
+*.swo
+*~
+AGENTS.md
+CLAUDE.md
+docs/SDK_IDEAS_PLAN.md
