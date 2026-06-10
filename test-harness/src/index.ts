@@ -1,1 +1,2 @@
-export { MockRpcClient } from "./mocks/rpc.js"; export { MockWallet } from "./mocks/wallet.js"; export { MOCK_TOKENS } from "./mocks/tokens.js"; export { toWei, fromWei, randomAddress } from "./helpers/evm.js"; export { lamportsToSol, solToLamports } from "./helpers/sol.js"; export { assertBalance, assertTxSuccess, assertApprox } from "./assertions.js"; export type { MockConfig } from "./types.js";
+export { TestHarness } from "./harness.js";
+export type { TestContext, TestAccount, TestContract, MockProvider, TestResult } from "./harness.js";

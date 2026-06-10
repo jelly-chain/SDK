@@ -1,1 +1,2 @@
-export { BridgeRouter } from "./router.js"; export { AxelarBridge } from "./bridges/axelar.js"; export { WormholeBridge } from "./bridges/wormhole.js"; export { StargateBridge } from "./bridges/stargate.js"; export type { BridgeName, BridgeQuote, BridgeTx } from "./types.js";
+export { BridgeAdapter, type BridgeConfig, BridgeName, BridgeStatus } from "./bridge.js";
+export type { BridgeQuote, BridgeRouteStep, BridgeTransaction } from "./bridge.js";

@@ -1,1 +1,1 @@
-export { SchemaValidator } from "./schema.js"; export { ConfigLoader } from "./loader.js"; export { CHAIN_DEFAULTS } from "./chains/index.js"; export type { ConfigSchema, LoadedConfig } from "./types.js";
+export { ConfigManager, type ConfigValue, type ConfigSchema } from "./manager.js";
