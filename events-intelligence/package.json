@@ -1,7 +1,7 @@
 {
-  "name": "@jellychain/sentiment-engine",
+  "name": "@jellychain/events-intelligence",
   "version": "1.0.0",
-  "description": "Multi-source NLP sentiment analysis — social, news, on-chain, trend detection",
+  "description": "Event-driven market intelligence — Eventbrite, Ticketmaster, conference tracking",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
@@ -9,5 +9,5 @@
   "dependencies": { "@jellychain/shared-types": "*", "@jellychain/sdk-core": "*" },
   "devDependencies": { "typescript": "^5.4.0", "@types/node": "^20.12.0" },
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "sentiment-engine" }
+  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "events-intelligence" }
 }

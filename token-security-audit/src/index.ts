@@ -1,1 +1,2 @@
-export { AuditReporter } from "./reporter.js"; export { checkHoneypot } from "./checks/honeypot.js"; export { checkMintable } from "./checks/mintable.js"; export { checkRenounced } from "./checks/renounced.js"; export { checkProxy } from "./checks/proxy.js"; export { checkSellTax } from "./checks/tax.js"; export { checkAntiWhale } from "./checks/anti-whale.js"; export type { SecurityCheck, AuditReport, CheckFunction } from "./types.js";
+export { TokenSecurityAuditor, type AuditorConfig } from "./auditor.js";
+export type { SecurityRiskLevel, VulnerabilityType, TokenSecurityResult, VulnerabilityFinding, ContractAnalysis, LiquidityAnalysis, HolderAnalysis, TradingAnalysis, AuditInfo, SecurityScanConfig } from "./types.js";

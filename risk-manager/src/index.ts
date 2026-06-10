@@ -1,1 +1,6 @@
-export { RiskMetricsCalculator } from "./metrics.js"; export { DiversificationAnalyzer } from "./diversification.js"; export { ExposureManager } from "./exposure.js"; export { CircuitBreakerEngine } from "./circuit-breaker.js"; export type { RiskMetrics, ExposureLimit, CircuitBreaker } from "./types.js";
+export { RiskManager, type RiskManagerConfig } from "./manager.js";
+export type {
+  RiskLimit, RiskCheck, PortfolioRisk, PositionRisk, VaRInput, VaRResult,
+  CorrelationMatrix, StressTestResult, ScenarioResult, RiskReport,
+  RiskLevel, RiskFactor,
+} from "./types.js";
