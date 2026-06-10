@@ -1,24 +1,28 @@
 {
-  "name": "@jelly-chain/shared-types",
+  "name": "@jellychain/shared-types",
   "version": "1.0.0",
-  "description": "Shared TypeScript types across all Jelly Chain SDKs",
+  "description": "Shared TypeScript types across all Jelly Chain SDK packages",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
-  "keywords": [
-    "jelly-chain",
-    "types",
-    "shared",
-    "prediction",
-    "sports",
-    "blockchain"
-  ],
-  "author": "jelly-chain",
-  "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.3.0"
+    "typescript": "^5.4.0",
+    "@types/node": "^20.12.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jelly-chain/SDK.git",
+    "directory": "packages/shared-types"
   }
 }
