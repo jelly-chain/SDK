@@ -1,49 +1,7 @@
-export interface EventsConfig {
-  eventbriteToken?: string;
-  ticketmasterKey?: string;
-  enabled?: boolean;
-}
-
-export interface EventVenue {
-  name: string;
-  city: string;
-  country: string;
-  latitude?: number;
-  longitude?: number;
-  capacity?: number;
-}
-
-export interface EventData {
-  id: string;
-  source: 'eventbrite' | 'ticketmaster' | 'manual';
-  name: string;
-  description?: string;
-  category: string;
-  startDate: string;
-  endDate?: string;
-  venue?: EventVenue;
-  url?: string;
-  priceRange?: { min: number; max: number; currency: string };
-  status: 'on-sale' | 'sold-out' | 'cancelled' | 'postponed' | 'rescheduled';
-  attendance?: number;
-  popularity?: number;
-  tags: string[];
-}
-
-export interface EventSearchQuery {
-  keyword?: string;
-  city?: string;
-  country?: string;
-  category?: string;
-  startDate?: string;
-  endDate?: string;
-  radius?: number; // km
-}
-
-export interface EventMarketSignal {
-  event: EventData;
-  signal: 'bullish' | 'bearish' | 'neutral';
-  confidence: number;
-  reason: string;
-  relatedTokens?: string[];
-}
+export enum EventType { CONFERENCE = "concert", CONCERT = "concert", SPORTING = "sporting", POLITICAL = "political", CORPORATE = "corporate", EXHIBITION = "exhibition", FESTIVAL = "festival", WEBINAR = "webinar", HACKATHON = "hackathon", MEETUP = "meetup" }
+export enum EventSource { EVENTBRITE = "eventbrite", TICKETMASTER = "ticketmaster", MEETUP_COM = "meetup", LUMA = "luma", CUSTOM = "custom" }
+export interface EventData { id: string; name: string; description: string; type: EventType; source: EventSource; startDate: number; endDate: number; venue: string; city: string; country: string; capacity: number | null; ticketsAvailable: number | null; priceMin: number | null; priceMax: number | null; currency: string; url: string; imageUrl: string; tags: string[]; attendees: number | null; organizer: string; createdAt: number; updatedAt: number; metadata: Record<string, unknown> }
+export interface EventSearchQuery { keywords?: string; type?: EventType; city?: string; country?: string; startDate?: number; endDate?: number; source?: EventSource; limit?: number; offset?: number }
+export interface EventSearchResult { events: EventData[]; totalResults: number; page: number; hasMore: boolean; fetchedAt: number }
+export interface EventMarketSignal { event: EventData; signal: "bullish" | "bearish" | "neutral"; confidence: number; reasoning: string; affectedTokens: string[]; affectedSectors: string[]; expectedImpact: number; timestamp: number }
+export interface ConferenceIntelligence { name: string; startDate: number; endDate: number; city: string; expectedAttendees: number; speakers: string[]; sponsors: string[]; relatedTokens: string[]; sentiment: number; keyTopics: string[]; predictionSignals: EventMarketSignal[] }

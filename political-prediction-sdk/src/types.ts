@@ -1,56 +1,8 @@
-export interface PoliticalConfig {
-  predictitApiKey?: string;
-  enabled?: boolean;
-}
-
-export interface PoliticalMarket {
-  id: string;
-  name: string;
-  shortName: string;
-  category: string;
-  status: 'open' | 'closed' | 'resolved';
-  url: string;
-  image?: string;
-  outcomes: PoliticalOutcome[];
-  lastTradePrice: number;
-  volume: number;
-  liquidity: number;
-  endDate?: string;
-}
-
-export interface PoliticalOutcome {
-  id: string;
-  name: string;
-  shortName: string;
-  price: number;
-  bestBuyYes: number;
-  bestBuyNo: number;
-  bestSellYes: number;
-  bestSellNo: number;
-  lastTradePrice: number;
-  volume: number;
-}
-
-export interface PoliticalPoll {
-  id: string;
-  race: string;
-  pollster: string;
-  date: string;
-  sampleSize: number;
-  marginOfError: number;
-  results: Array<{ candidate: string; party: string; percentage: number }>;
-  grade?: string;
-}
-
-export interface ElectionForecast {
-  race: string;
-  candidates: Array<{
-    name: string;
-    party: string;
-    winProbability: number;
-    pollingAverage: number;
-    bettingOdds: number;
-  }>;
-  lastUpdated: string;
-  confidence: number;
-}
+export enum PoliticalMarketType { ELECTION_WINNER = "election_winner", POPULAR_VOTE = "popular_vote", ELECTORAL_VOTES = "electoral_votes", SEAT_COUNT = "seat_count", POLICY_OUTCOME = "policy_outcome", APPROVAL_RATING = "approval_rating", IMPEACHMENT = "impeachment", LEGISLATION = "legislation", INTERNATIONAL = "international" }
+export enum PoliticalParty { DEMOCRAT = "democrat", REPUBLICAN = "republican", INDEPENDENT = "independent", LIBERTARIAN = "libertarian", GREEN = "green", OTHER = "other" }
+export interface PoliticalMarket { id: string; title: string; description: string; type: PoliticalMarketType; source: "predictit" | "polymarket" | "kalshi"; outcomePrices: OutcomePrice[]; volume: number; volume24h: number; liquidity: number; endDate: number; resolutionCriteria: string; imageUrl: string; tags: string[]; status: "open" | "closed" | "resolved"; createdAt: number; updatedAt: number }
+export interface OutcomePrice { outcome: string; price: number; impliedProbability: number; change24h: number; volume: number; bestBid: number; bestAsk: number }
+export interface ElectionForecast { election: string; date: number; candidates: CandidateForecast[]; totalVolume: number; lastUpdated: number; source: string }
+export interface CandidateForecast { name: string; party: PoliticalParty; winProbability: number; voteShareProbability: number; odds: number; trend: "rising" | "falling" | "stable"; volume: number; lastUpdated: number }
+export interface PolicyImpact { policy: string; description: string; probability: number; affectedSectors: string[]; affectedTokens: string[]; expectedImpact: number; timeframe: string; confidence: number }
+export interface PoliticalSentiment { topic: string; sentiment: number; volume: number; trending: boolean; sources: string[]; timestamp: number }

@@ -1,2 +1,2 @@
-export * from './types.js';
-export * from './client.js';
+export { PoliticalPredictionTracker, type PoliticalPredictionConfig } from "./tracker.js";
+export type { PoliticalMarketType, PoliticalParty, PoliticalMarket, OutcomePrice, ElectionForecast, CandidateForecast, PolicyImpact, PoliticalSentiment } from "./types.js";

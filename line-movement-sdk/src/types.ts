@@ -1,49 +1,91 @@
-export interface LineMovementConfig {
-  storageBackend?: 'memory' | 'redis';
-  maxHistoryDays?: number;
+export enum MovementType { NORMAL = "normal", STEAM = "steam", REVERSE = "reverse_line_movement", STALE = "stale", SHARP = "sharp", PUBLIC = "public" }
+export enum MarketSport { GENERIC = "generic", NFL = "nfl", NBA = "nba", MLB = "mlb", NHL = "nhl", SOCCER = "soccer", TENNIS = "tennis", MMA = "mma", BOXING = "boxing", F1 = "f1", POLITICS = "politics", CRYPTO = "crypto" }
+
+export interface LineSnapshot {
+  id: string;
+  marketId: string;
+  sport: MarketSport;
+  eventName: string;
+  selection: string;
+  odds: number;
+  impliedProbability: number;
+  volume: number;
+  timestamp: number;
+  source: string;
+  metadata: Record<string, unknown>;
 }
 
-export interface OddsSnapshot {
-  timestamp: string;
-  sportsbook: string;
-  fixtureId: string;
-  market: string;
-  homeOdds: number;
-  awayOdds: number;
-  drawOdds?: number;
-  spread?: number;
-  total?: number;
-}
-
-export interface LineMovementData {
-  fixtureId: string;
-  market: string;
-  snapshots: OddsSnapshot[];
-  openingLine: OddsSnapshot;
-  currentLine: OddsSnapshot;
-  movement: {
-    homeOddsDelta: number;
-    awayOddsDelta: number;
-    direction: 'toward-home' | 'toward-away' | 'stable';
-    sharpMoney: 'home' | 'away' | 'none' | 'unclear';
-  };
-  steamMoves: SteamMove[];
+export interface LineMovement {
+  marketId: string;
+  selection: string;
+  startOdds: number;
+  endOdds: number;
+  startProbability: number;
+  endProbability: number;
+  change: number;
+  changePercent: number;
+  direction: "toward" | "against";
+  type: MovementType;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  volumeAtStart: number;
+  volumeAtEnd: number;
+  significance: number;
 }
 
 export interface SteamMove {
-  timestamp: string;
-  direction: 'home' | 'away';
-  magnitude: number;
-  sportsbook: string;
-  possibleCauses: string[];
+  marketId: string;
+  selection: string;
+  snapshots: LineSnapshot[];
+  totalMovement: number;
+  duration: number;
+  confirmed: boolean;
+  expectedValue?: number;
+  recommendation?: string;
 }
 
-export interface LineValueAnalysis {
-  currentOdds: number;
-  impliedProbability: number;
-  modelProbability: number;
+export interface ReverseLineMovement {
+  marketId: string;
+  selection: string;
+  publicSide: string;
+  lineDirection: "against_public" | "with_public";
+  publicPercent: number;
+  lineChange: number;
+  significance: number;
+  expectedValue: number;
+}
+
+export interface SharpMoneyIndicator {
+  marketId: string;
+  selection: string;
+  confidence: number;
+  evidence: string[];
+  estimatedSharpPercent: number;
+  lineEfficiency: number;
+  recommendation: string;
+  expectedValue: number;
+  timestamp: number;
+}
+
+export interface ClosingLineValue {
+  marketId: string;
+  selection: string;
+  betOdds: number;
+  closingOdds: number;
+  clv: number;
+  clvPercent: number;
   edge: number;
-  bestOdds: number;
-  bestSportsbook: string;
-  recommendation: 'bet' | 'pass';
+  beatsClo?: boolean;
+}
+
+export interface MarketEfficiency {
+  marketId: string;
+  sport: MarketSport;
+  efficiency: number;
+  sampleSize: number;
+  avgClv: number;
+  beatRate: number;
+  sharpeRatio: number;
+  analysisPeriod: { start: number; end: number };
 }

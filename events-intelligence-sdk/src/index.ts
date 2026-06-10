@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './analyzer.js';
+export { EventIntelligence, type EventIntelligenceConfig } from "./engine.js";
+export type { EventType, EventSource, EventData, EventSearchQuery, EventSearchResult, EventMarketSignal, ConferenceIntelligence } from "./types.js";
