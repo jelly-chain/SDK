@@ -1,0 +1,16 @@
+{
+  "name": "jellyos-sdk-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "*/*/package.json"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

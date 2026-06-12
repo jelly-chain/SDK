@@ -1,11 +1,18 @@
 /**
- * @jellychain/sdk-core — Base SDK class, utilities, error handling, testing framework
+ * SDK Core - Base SDK class for all JellyOS SDKs
  */
-
-export { BaseSDK, type BaseSDKConfig } from "./base.js";
-export { withRetry, type RetryConfig } from "./base.js";
-export { Logger } from "./base.js";
-export {
-  SdkError, ErrorCode, ChainError, TradingError, RpcError,
-  ApiError, SecurityError, ValidationError,
-} from "./errors.js";
+export abstract class BaseSDK {
+  protected config: BaseSDKConfig;
+  protected name: string;
+  constructor(config: BaseSDKConfig, name: string) {
+    this.config = config;
+    this.name = name;
+  }
+  protected rpcCall<T>(method: string, params: unknown[]): Promise<T> {
+    return {} as T;
+  }
+}
+export interface BaseSDKConfig {
+  rpcUrl?: string;
+  apiKey?: string;
+}

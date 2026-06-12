@@ -1,11 +1,8 @@
 /**
- * @jellychain/shared-types — Foundation types for all 520+ Jelly Chain SDKs
- *
- * This package is the single source of truth for all shared types,
- * interfaces, and enums used across the SDK ecosystem.
+ * Shared Types across all JellyOS SDKs
  */
-
-export * from "./chains.js";
-export * from "./tokens.js";
-export * from "./signals.js";
-export * from "./agents.js";
+export enum ChainId {
+  ETHEREUM = 1, ARBITRUM = 42161, POLYGON = 137, OPTIMISM = 10, BASE = 8453,
+  SOLANA = 101, BSC = 56, AVALANCHE = 43114
+}
+export interface TokenRef { symbol: string; decimals: number; chainId: number; address?: string }

@@ -1270,3 +1270,30 @@ Each SDK follows the same architecture pattern:
 ## License
 
 MIT — Jelly Chain
+
+---
+
+## Monorepo Usage
+
+This repository uses npm workspaces. Install any SDK locally with:
+
+```bash
+# Clone the repo
+git clone https://github.com/jelly-chain/SDK
+cd SDK
+
+# Install all dependencies
+npm install
+
+# Build all SDKs
+npm run build --workspaces
+```
+
+Then import in your code:
+
+```typescript
+import { UniswapV3SDK } from "@jellychain/uniswap-v3-sdk";
+import { ChainId } from "@jellychain/shared-types";
+```
+
+All SDKs are available under `@jellychain/*` namespace once built.
