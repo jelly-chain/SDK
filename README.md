@@ -1,9 +1,9 @@
 # SDK-MAIN — JellyOS / JellyClaude Intelligence Layer
 
-> **104 Production SDKs · 146 Commits · Agent-first prediction & trading infrastructure.**
+> **177 Production SDKs · 193 Commits · Agent-first prediction & trading infrastructure.**
 
-![SDKs](https://img.shields.io/badge/SDKs-134%20Production%20SDKs-blue)
-![Commits](https://img.shields.io/badge/Commits-159-green)
+![SDKs](https://img.shields.io/badge/SDKs-177%20Production%20SDKs-blue)
+![Commits](https://img.shields.io/badge/Commits-193-green)
 ![Vulnerabilities](https://img.shields.io/badge/Vulnerabilities-0-brightgreen)
 
 This repository contains the complete SDK ecosystem for JellyOS and JellyClaude — AI agent systems that generate predictions, detect arbitrage, and make data-driven decisions across prediction markets (Polymarket, Kalshi), sports betting, and DeFi.
