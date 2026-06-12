@@ -2,7 +2,7 @@
 
 > **41 Production SDKs · 509 Planned · Agent-first prediction & trading infrastructure.**
 
-![SDKs](https://img.shields.io/badge/SDKs-28%20Production%20%2F%20520%20Planned-blue)
+![SDKs](https://img.shields.io/badge/SDKs-41%20Production%20%2F%20509%20Planned-blue)
 ![Commits](https://img.shields.io/badge/Commits-137-green)
 ![Vulnerabilities](https://img.shields.io/badge/Vulnerabilities-0-brightgreen)
 
@@ -1230,6 +1230,11 @@ npm run build
 | Priority | SDK | Use Case |
 |----------|-----|----------|
 | 🔴 P0 | `polymarket-clob-sdk` | Deep Polymarket integration |
+| 🔴 P0 | `sportradar-sdk` | Best sports data |
+| 🔴 P0 | `FIFA-SDK` | World Cup 2026 |
+| 🔴 P0 | `SPORT-SDK` | Multi-sport coverage |
+| 🔴 P0 | `Prediction-V2-main` | Crypto market prediction |
+| 🔴 P0 | `uniswap-v3-sdk` | Uniswap V3 concentrated liquidity |
 | 🔴 P0 | `sportradar-sdk` | Best sports data |
 | 🔴 P0 | `FIFA-SDK` | World Cup 2026 |
 | 🔴 P0 | `SPORT-SDK` | Multi-sport coverage |
