@@ -1,0 +1,12 @@
+{
+  "name": "@jellychain/catalog-sdk",
+  "version": "1.0.0",
+  "description": "SDK for catalog-sdk",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
+  "scripts": { "build": "tsc", "type-check": "tsc --noEmit", "clean": "rm -rf dist" },
+  "dependencies": { "@jellychain/shared-types": "*", "@jellychain/sdk-core": "*" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "catalog-sdk" }
+}
