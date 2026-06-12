@@ -1,7 +1,7 @@
 {
   "name": "@jellychain/frax",
   "version": "1.0.0",
-  "description": "Agent-focused SDK for frax",
+  "description": "SDK for frax",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },

@@ -1,7 +1,7 @@
 {
   "name": "@jellychain/aave-v3",
   "version": "1.0.0",
-  "description": "Agent-focused SDK for aave-v3",
+  "description": "SDK for aave-v3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
