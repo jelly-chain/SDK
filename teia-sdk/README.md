@@ -1,6 +1,6 @@
-# SDK
+# teia-sdk
 
-SDK for teia-sdk.
+SDK for teia sdk integration.
 
 ## Installation
 
@@ -8,6 +8,14 @@ SDK for teia-sdk.
 npm install @jellychain/teia-sdk
 ```
 
+## Usage
+
+```typescript
+import { teiaSDK } from "@jellychain/teia-sdk";
+
+const sdk = new teiaSDK({ /* config */ });
+```
+
 ## Status
 
-✅ Production-ready
+✅ Production-ready - Part of the JellyOS SDK ecosystem (177 SDKs)

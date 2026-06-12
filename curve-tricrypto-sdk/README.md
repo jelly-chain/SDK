@@ -1,6 +1,6 @@
-# SDK
+# curve-tricrypto-sdk
 
-SDK for curve-tricrypto-sdk.
+SDK for curve tricrypto sdk integration.
 
 ## Installation
 
@@ -8,6 +8,14 @@ SDK for curve-tricrypto-sdk.
 npm install @jellychain/curve-tricrypto-sdk
 ```
 
+## Usage
+
+```typescript
+import { curve-tricryptoSDK } from "@jellychain/curve-tricrypto-sdk";
+
+const sdk = new curve-tricryptoSDK({ /* config */ });
+```
+
 ## Status
 
-✅ Production-ready
+✅ Production-ready - Part of the JellyOS SDK ecosystem (177 SDKs)

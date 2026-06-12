@@ -1,6 +1,6 @@
-# SDK
+# superrare-sdk
 
-SDK for superrare-sdk.
+SDK for superrare sdk integration.
 
 ## Installation
 
@@ -8,6 +8,14 @@ SDK for superrare-sdk.
 npm install @jellychain/superrare-sdk
 ```
 
+## Usage
+
+```typescript
+import { superrareSDK } from "@jellychain/superrare-sdk";
+
+const sdk = new superrareSDK({ /* config */ });
+```
+
 ## Status
 
-✅ Production-ready
+✅ Production-ready - Part of the JellyOS SDK ecosystem (177 SDKs)
