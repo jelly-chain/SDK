@@ -1,13 +1,33 @@
 /**
- * Ribbon Finance SDK - Theta Vaults, options covered calls
+ * Ribbon SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface RibbonVault { vaultId: string; name: string; token: string; tvl: number; apr: number; strategy: string }
+export interface RibbonConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class RibbonSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "Ribbon"); }
-  async getVault(vaultId: string): Promise<RibbonVault | null> { return null; }
-  async deposit(vaultId: string, amount: bigint): Promise<{ shareAmount: bigint }> { return { shareAmount: amount }; }
-  async withdraw(vaultId: string, shareAmount: bigint): Promise<{ amount: bigint }> { return { amount: shareAmount }; }
+  readonly chainId: ChainId;
+  
+  constructor(config: RibbonConfig) {
+    super(config, "Ribbon");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Ribbon", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

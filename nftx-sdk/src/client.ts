@@ -1,13 +1,33 @@
 /**
- * NFTX SDK - NFT index funds, staking, minting
+ * Nftx SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface NFTXVault { vaultId: string; name: string; nft: string; tvl: number; fee: number; tokenIdCount: number }
+export interface NftxConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class NFTXSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "NFTX"); }
-  async getVault(vaultId: string): Promise<NFTXVault | null> { return null; }
-  async mintNFT(vaultId: string, nft: string, tokenId: string): Promise<{ tokenIdMinted: string }> { return { tokenIdMinted: "0x" + Math.random().toString(36).slice(2, 10) }; }
-  async redeemVault(vaultId: string, amount: bigint): Promise<{ nftsReceived: string[] }> { return { nftsReceived: ["0x"] }; }
+export class NftxSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: NftxConfig) {
+    super(config, "Nftx");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Nftx", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

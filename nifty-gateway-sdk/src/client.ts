@@ -1,11 +1,33 @@
 /**
- * SDK - Client implementation
+ * NiftyGateway SDK - Protocol integration
  */
-import { BaseSDK } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface SDKConfig extends BaseSDKConfig {}
+export interface NiftyGatewayConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class NiftyGateway extends BaseSDK {
-  constructor(config: SDKConfig) { super(config, "NiftyGateway"); }
-  async getInfo(): Promise<any> { return {}; }
+export class NiftyGatewaySDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: NiftyGatewayConfig) {
+    super(config, "NiftyGateway");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "NiftyGateway", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

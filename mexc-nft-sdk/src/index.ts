@@ -1,1 +1,2 @@
-export { MexcNft } from "./client.js";
+export { MexcNftSDK } from "./client.js";
+export type { MexcNftConfig } from "./client.js";

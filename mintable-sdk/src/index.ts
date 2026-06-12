@@ -1,1 +1,2 @@
-export { Mintable } from "./client.js";
+export { MintableSDK } from "./client.js";
+export type { MintableConfig } from "./client.js";

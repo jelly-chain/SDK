@@ -1,13 +1,33 @@
 /**
- * NFTfi SDK - NFT lending, offers, loans
+ * Nftfi SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface NFTfiLoan { loanId: string; nft: { address: string; tokenId: string }; lender: string; borrower: string; amount: bigint; interest: number; duration: number }
+export interface NftfiConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class NFTfiSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "NFTfi"); }
-  async createOffer(params: { nft: string; tokenId: string; amount: bigint; interest: number; duration: number }): Promise<{ offerId: string }> { return { offerId: "0x" + Date.now().toString(16) }; }
-  async acceptOffer(offerId: string): Promise<{ loanId: string }> { return { loanId: "0x" + Date.now().toString(16) }; }
-  async getActiveLoans(): Promise<NFTfiLoan[]> { return []; }
+export class NftfiSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: NftfiConfig) {
+    super(config, "Nftfi");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Nftfi", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

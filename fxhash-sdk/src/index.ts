@@ -1,1 +1,2 @@
-export { Fxhash } from "./client.js";
+export { FxhashSDK } from "./client.js";
+export type { FxhashConfig } from "./client.js";

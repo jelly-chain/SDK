@@ -1,1 +1,2 @@
-export { OracleSDK as MAINSDK, type OracleFeed as MAINFeed, type OracleConfig as MAINConfig } from "./client.js";
+export { BandProtocolSDK } from "./client.js";
+export type { BandProtocolConfig } from "./client.js";

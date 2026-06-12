@@ -1,1 +1,2 @@
-export { NFTfiSDK, type NFTfiLoan } from "./client.js";
+export { NftfiSDK } from "./client.js";
+export type { NftfiConfig } from "./client.js";

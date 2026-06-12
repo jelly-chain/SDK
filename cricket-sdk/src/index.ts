@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './prediction.js';
+export { CricketSDK } from "./client.js";
+export type { CricketConfig } from "./client.js";

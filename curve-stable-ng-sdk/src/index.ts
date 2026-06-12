@@ -1,1 +1,2 @@
-export { CurveStableNg } from "./client.js";
+export { CurveStableNgSDK } from "./client.js";
+export type { CurveStableNgConfig } from "./client.js";

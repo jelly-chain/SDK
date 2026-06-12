@@ -1,1 +1,2 @@
-export { PendleSDK, type PendleMarket } from "./client.js";
+export { PendleSDK } from "./client.js";
+export type { PendleConfig } from "./client.js";

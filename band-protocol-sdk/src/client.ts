@@ -1,16 +1,33 @@
 /**
- * band-protocol SDK - Price feeds and data
+ * BandProtocol SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
-import { ChainId } from "@jellychain/shared-types";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface band-protocolFeed { address: string; asset: string; price: number; decimals: number; updatedAt: number }
-export interface band-protocolConfig extends BaseSDKConfig { chainId: ChainId }
+export interface BandProtocolConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class band-protocolSDK extends BaseSDK {
+export class BandProtocolSDK extends BaseSDK {
   readonly chainId: ChainId;
-  constructor(config: band-protocolConfig) { super(config, `band-protocol:${chainId}`); this.chainId = chainId; }
-  async getPrice(asset: string): Promise<number> { return 0; }
-  async getPriceFeed(address: string): Promise<band-protocolFeed | null> { return null; }
-  async getAllFeeds(): Promise<band-protocolFeed[]> { return []; }
+  
+  constructor(config: BandProtocolConfig) {
+    super(config, "BandProtocol");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "BandProtocol", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

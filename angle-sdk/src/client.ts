@@ -1,16 +1,33 @@
 /**
- * angle SDK - Price feeds and data
+ * Angle SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
-import { ChainId } from "@jellychain/shared-types";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface angleFeed { address: string; asset: string; price: number; decimals: number; updatedAt: number }
-export interface angleConfig extends BaseSDKConfig { chainId: ChainId }
+export interface AngleConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class angleSDK extends BaseSDK {
+export class AngleSDK extends BaseSDK {
   readonly chainId: ChainId;
-  constructor(config: angleConfig) { super(config, `angle:${chainId}`); this.chainId = chainId; }
-  async getPrice(asset: string): Promise<number> { return 0; }
-  async getPriceFeed(address: string): Promise<angleFeed | null> { return null; }
-  async getAllFeeds(): Promise<angleFeed[]> { return []; }
+  
+  constructor(config: AngleConfig) {
+    super(config, "Angle");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Angle", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

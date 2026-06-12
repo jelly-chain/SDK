@@ -1,1 +1,2 @@
-export { TokenSetsSDK, type SetToken } from "./client.js";
+export { TokensetsSDK } from "./client.js";
+export type { TokensetsConfig } from "./client.js";

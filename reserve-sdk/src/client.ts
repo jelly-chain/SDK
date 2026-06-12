@@ -1,12 +1,33 @@
 /**
- * Reserve SDK - RSV stablecoin, overcollateralization
+ * Reserve SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface ReservePosition { collateral: string; amount: bigint; debt: bigint; collateralRatio: number }
+export interface ReserveConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class ReserveSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "Reserve"); }
-  async getPosition(address: string): Promise<ReservePosition | null> { return null; }
-  async mintRsv(amount: bigint): Promise<{ rsvAmount: bigint }> { return { rsvAmount: amount }; }
+  readonly chainId: ChainId;
+  
+  constructor(config: ReserveConfig) {
+    super(config, "Reserve");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Reserve", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

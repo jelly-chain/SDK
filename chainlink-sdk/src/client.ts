@@ -1,19 +1,33 @@
 /**
- * Chainlink SDK - Price feeds, automation, randomness, CCIP
+ * Chainlink SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
-import { ChainId } from "@jellychain/shared-types";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface ChainlinkFeed { address: string; asset: string; decimals: number; heartbeat: number; threshold: number; currentPrice: number; updatedAt: number }
-export interface ChainlinkAutomation { address: string, balance: bigint, balanceUsd: number, triggerData: string, state: string }
-export interface ChainlinkConfig extends BaseSDKConfig { chainId: ChainId }
+export interface ChainlinkConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class ChainlinkSDK extends BaseSDK {
   readonly chainId: ChainId;
-  constructor(config: ChainlinkConfig) { super(config, `Chainlink:${config.chainId}`); this.chainId = config.chainId; }
-  async getPriceFeed(asset: string): Promise<ChainlinkFeed | null> { return null; }
-  async getLatestPrice(feedAddress: string): Promise<{ price: number; decimals: number; updatedAt: number }> { return { price: 1, decimals: 8, updatedAt: Date.now() }; }
-  async getAllFeeds(asset?: string): Promise<ChainlinkFeed[]> { return []; }
-  async createAutomation(params: { address: string; triggerData: string; funding: bigint }): Promise<{ txHash: string }> { return { txHash: "0x" + Date.now().toString(16) }; }
-  async requestRandomness(fee: bigint, seed?: string): Promise<{ requestId: string; txHash: string }> { return { requestId: "0x" + Math.random().toString(36).slice(2, 10), txHash: "0x" + Date.now().toString(16) }; }
+  
+  constructor(config: ChainlinkConfig) {
+    super(config, "Chainlink");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Chainlink", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

@@ -1,1 +1,2 @@
-export { BlurSDK, type BlurOrder } from "./client.js";
+export { BlurSDK } from "./client.js";
+export type { BlurConfig } from "./client.js";

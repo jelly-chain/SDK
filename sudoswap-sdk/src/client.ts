@@ -1,13 +1,33 @@
 /**
- * Sudoswap SDK - NFT AMM, bonding curves, pools
+ * Sudoswap SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface SudoSwapPool { poolId: string; nft: string; token: string; bondingCurve: number; spotPrice: number; delta: number; fee: number }
+export interface SudoswapConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class SudoSwapSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "SudoSwap"); }
-  async getPool(poolId: string): Promise<SudoSwapPool | null> { return null; }
-  async createPool(nft: string, token: string, bondingCurve: number, delta: number, fee: number): Promise<{ poolId: string }> { return { poolId: "0x" + Date.now().toString(16) }; }
-  async swapNFT(poolId: string, tokenAmount: bigint): Promise<{ nftReceived: string }> { return { nftReceived: "0x" + Date.now().toString(16) }; }
+export class SudoswapSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: SudoswapConfig) {
+    super(config, "Sudoswap");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Sudoswap", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

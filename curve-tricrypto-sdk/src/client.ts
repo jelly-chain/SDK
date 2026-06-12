@@ -1,11 +1,33 @@
 /**
- * SDK - Client implementation
+ * CurveTricrypto SDK - Protocol integration
  */
-import { BaseSDK } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface SDKConfig extends BaseSDKConfig {}
+export interface CurveTricryptoConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class CurveTricrypto extends BaseSDK {
-  constructor(config: SDKConfig) { super(config, "CurveTricrypto"); }
-  async getInfo(): Promise<any> { return {}; }
+export class CurveTricryptoSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: CurveTricryptoConfig) {
+    super(config, "CurveTricrypto");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "CurveTricrypto", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

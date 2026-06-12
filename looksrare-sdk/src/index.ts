@@ -1,1 +1,2 @@
-export { LooksRareSDK, type LooksRareNFT, type LooksRareOrder } from "./client.js";
+export { LooksrareSDK } from "./client.js";
+export type { LooksrareConfig } from "./client.js";

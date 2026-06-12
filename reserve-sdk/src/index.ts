@@ -1,1 +1,2 @@
-export { ReserveSDK, type ReservePosition } from "./client.js";
+export { ReserveSDK } from "./client.js";
+export type { ReserveConfig } from "./client.js";

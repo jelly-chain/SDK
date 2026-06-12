@@ -1,1 +1,2 @@
-export { PremiaSDK, type PremiaOption } from "./client.js";
+export { PremiaSDK } from "./client.js";
+export type { PremiaConfig } from "./client.js";

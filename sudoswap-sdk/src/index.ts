@@ -1,1 +1,2 @@
-export { SudoSwapSDK, type SudoSwapPool } from "./client.js";
+export { SudoswapSDK } from "./client.js";
+export type { SudoswapConfig } from "./client.js";

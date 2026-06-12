@@ -1,2 +1,2 @@
-export { ManifoldClient, type ManifoldConfig } from "./manifold.js";
-export type { ManifoldMarket, ManifoldAnswer, ManifoldBet, ManifoldUser } from "./manifold.js";
+export { ManifoldSDK } from "./client.js";
+export type { ManifoldConfig } from "./client.js";

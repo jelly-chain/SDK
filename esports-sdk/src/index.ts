@@ -1,2 +1,2 @@
-export { EsportsClient, type EsportsConfig, EsportTitle } from "./esports.js";
-export type { EsportsMatch, EsportsTeam, EsportsPlayer, EsportsTournament } from "./esports.js";
+export { EsportsSDK } from "./client.js";
+export type { EsportsConfig } from "./client.js";

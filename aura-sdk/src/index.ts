@@ -1,1 +1,2 @@
-export { AuraSDK, type AuraPool } from "./client.js";
+export { AuraSDK } from "./client.js";
+export type { AuraConfig } from "./client.js";

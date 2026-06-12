@@ -1,1 +1,2 @@
-export { LyraSDK, type LyraOption, type LyraPosition, type LyraConfig } from "./client.js";
+export { LyraSDK } from "./client.js";
+export type { LyraConfig } from "./client.js";

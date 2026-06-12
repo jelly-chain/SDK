@@ -1,1 +1,2 @@
-export { Catalog } from "./client.js";
+export { CatalogSDK } from "./client.js";
+export type { CatalogConfig } from "./client.js";

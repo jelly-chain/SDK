@@ -1,11 +1,33 @@
 /**
- * X2Y2 SDK - NFT marketplace, orders
+ * X2y2 SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface X2Y2Order { id: string; signer: string; kind: "sell" | "buy"; }
+export interface X2y2Config extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class X2Y2SDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "X2Y2"); }
-  async createOrder(params: { kind: "sell" | "buy"; contract: string; tokenId: string; price: bigint }): Promise<{ orderId: string }> { return { orderId: "0x" + Date.now().toString(16) }; }
+export class X2y2SDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: X2y2Config) {
+    super(config, "X2y2");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "X2y2", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

@@ -1,1 +1,2 @@
-export { BalancerStable } from "./client.js";
+export { BalancerStableSDK } from "./client.js";
+export type { BalancerStableConfig } from "./client.js";

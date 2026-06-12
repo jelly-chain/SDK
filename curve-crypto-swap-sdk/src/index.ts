@@ -1,1 +1,2 @@
-export { CurveCryptoSwap } from "./client.js";
+export { CurveCryptoSwapSDK } from "./client.js";
+export type { CurveCryptoSwapConfig } from "./client.js";

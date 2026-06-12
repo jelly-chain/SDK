@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './portfolio.js';
+export { KalshiV3SDK } from "./client.js";
+export type { KalshiV3Config } from "./client.js";

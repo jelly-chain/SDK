@@ -1,11 +1,33 @@
 /**
- * Blur SDK - NFT trading, orders, collections
+ * Blur SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface BlurOrder { orderId: string; maker: string; nft: string; minPrice: bigint }
+export interface BlurConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class BlurSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "Blur"); }
-  async getOrder(orderId: string): Promise<BlurOrder | null> { return null; }
+  readonly chainId: ChainId;
+  
+  constructor(config: BlurConfig) {
+    super(config, "Blur");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Blur", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

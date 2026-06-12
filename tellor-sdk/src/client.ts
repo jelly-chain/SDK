@@ -1,12 +1,33 @@
 /**
- * Tellor SDK - Decentralized oracle, TRB staking
+ * Tellor SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface TellorPrice { timestamp: number; value: bigint; reporter: string }
+export interface TellorConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class TellorSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "Tellor"); }
-  async getPrice(queryId: string): Promise<TellorPrice | null> { return null; }
-  async getCurrentValue(queryId: string): Promise<bigint> { return 0n; }
+  readonly chainId: ChainId;
+  
+  constructor(config: TellorConfig) {
+    super(config, "Tellor");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Tellor", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

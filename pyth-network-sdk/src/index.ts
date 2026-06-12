@@ -1,1 +1,2 @@
-export { PythNetworkSDK, type PythFeed, type PythPublisher, type PythConfig } from "./client.js";
+export { PythNetworkSDK } from "./client.js";
+export type { PythNetworkConfig } from "./client.js";

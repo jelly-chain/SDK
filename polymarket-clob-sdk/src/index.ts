@@ -1,4 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './orderbook.js';
-export * from './arbitrage.js';
+export { PolymarketClobSDK } from "./client.js";
+export type { PolymarketClobConfig } from "./client.js";

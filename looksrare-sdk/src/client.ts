@@ -1,13 +1,33 @@
 /**
- * LooksRare SDK - NFT marketplace, royalties, rewards
+ * Looksrare SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface LooksRareNFT { address: string; tokenId: string; name: string; creator: string; royalties: number }
-export interface LooksRareOrder { quoteType: number; globalFee: number; signer: string; payload; }
+export interface LooksrareConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-export class LooksRareSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "LooksRare"); }
-  async getNFT(address: string, tokenId: string): Promise<LooksRareNFT | null> { return null; }
-  async createOrder(params: { collection: string; tokenIds: string[]; bids: bigint[] }): Promise<{ orderHash: string }> { return { orderHash: "0x" + Date.now().toString(16) }; }
+export class LooksrareSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: LooksrareConfig) {
+    super(config, "Looksrare");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Looksrare", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

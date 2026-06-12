@@ -1,1 +1,2 @@
-export { Rarible } from "./client.js";
+export { RaribleSDK } from "./client.js";
+export type { RaribleConfig } from "./client.js";

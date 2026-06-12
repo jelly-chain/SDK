@@ -1,1 +1,2 @@
-export { TellorSDK, type TellorPrice } from "./client.js";
+export { TellorSDK } from "./client.js";
+export type { TellorConfig } from "./client.js";

@@ -1,3 +1,2 @@
-export * from './types.js';
-export * from './client.js';
-export * from './impact.js';
+export { WeatherVenueSDK } from "./client.js";
+export type { WeatherVenueConfig } from "./client.js";

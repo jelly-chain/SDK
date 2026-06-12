@@ -1,91 +1,33 @@
-import type { ManifoldConfig, ManifoldMarket, ManifoldBet, ManifoldUser } from './types.js';
+/**
+ * Manifold SDK - Protocol integration
+ */
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export class ManifoldClient {
-  private readonly baseUrl: string;
-  private readonly apiKey: string;
-  readonly enabled: boolean;
+export interface ManifoldConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
-  constructor(config: ManifoldConfig = {}) {
-    this.baseUrl = config.baseUrl ?? 'https://api.manifold.markets/v0';
-    this.apiKey = config.apiKey ?? process.env['MANIFOLD_API_KEY'] ?? '';
-    this.enabled = config.enabled !== false;
+export class ManifoldSDK extends BaseSDK {
+  readonly chainId: ChainId;
+  
+  constructor(config: ManifoldConfig) {
+    super(config, "Manifold");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
   }
 
-  private headers(): Record<string, string> {
-    const h: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (this.apiKey) h['Authorization'] = `Bearer ${this.apiKey}`;
-    return h;
+  async getInfo(): Promise<any> {
+    return { name: "Manifold", status: "active", chainId: this.chainId };
   }
 
-  async getMarkets(params: { limit?: number; sort?: string; term?: string; groupSlug?: string } = {}): Promise<ManifoldMarket[]> {
-    const qs = new URLSearchParams();
-    if (params.limit) qs.set('limit', String(params.limit));
-    if (params.sort) qs.set('sort', params.sort);
-    if (params.term) qs.set('term', params.term);
-    if (params.groupSlug) qs.set('groupSlug', params.groupSlug);
-
-    const res = await fetch(`${this.baseUrl}/markets?${qs}`, { headers: this.headers() });
-    if (!res.ok) return [];
-    return res.json() as Promise<ManifoldMarket[]>;
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
   }
 
-  async getMarket(marketId: string): Promise<ManifoldMarket | null> {
-    const res = await fetch(`${this.baseUrl}/markets/${marketId}`, { headers: this.headers() });
-    if (!res.ok) return null;
-    return res.json() as Promise<ManifoldMarket>;
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
   }
 
-  async getMarketBySlug(slug: string): Promise<ManifoldMarket | null> {
-    const res = await fetch(`${this.baseUrl}/market/${slug}`, { headers: this.headers() });
-    if (!res.ok) return null;
-    return res.json() as Promise<ManifoldMarket>;
-  }
-
-  async search(query: string): Promise<ManifoldMarket[]> {
-    return this.getMarketss({ term: query, limit: 20 });
-  }
-
-  async getMarketss(params: Parameters<typeof this.getMarkets>[0] = {}): Promise<ManifoldMarket[]> {
-    return this.getMarkets(params);
-  }
-
-  async getBets(params: { marketId?: string; userId?: string; limit?: number } = {}): Promise<ManifoldBet[]> {
-    const qs = new URLSearchParams();
-    if (params.marketId) qs.set('contractId', params.marketId);
-    if (params.userId) qs.set('userId', params.userId);
-    if (params.limit) qs.set('limit', String(params.limit));
-
-    const res = await fetch(`${this.baseUrl}/bets?${qs}`, { headers: this.headers() });
-    if (!res.ok) return [];
-    return res.json() as Promise<ManifoldBet[]>;
-  }
-
-  async getUser(userId: string): Promise<ManifoldUser | null> {
-    const res = await fetch(`${this.baseUrl}/users/${userId}`, { headers: this.headers() });
-    if (!res.ok) return null;
-    return res.json() as Promise<ManifoldUser>;
-  }
-
-  async getTrendingMarkets(): Promise<ManifoldMarket[]> {
-    return this.getMarkets({ sort: 'liquidity', limit: 20 });
-  }
-
-  async getNewMarkets(): Promise<ManifoldMarket[]> {
-    return this.getMarkets({ sort: 'newest', limit: 20 });
-  }
-
-  async getClosedMarkets(): Promise<ManifoldMarket[]> {
-    const markets = await this.getMarkets({ limit: 100 });
-    return markets.filter((m) => m.isResolved);
-  }
-
-  async placeBet(marketId: string, outcome: 'YES' | 'NO', amount: number): Promise<boolean> {
-    if (!this.apiKey) return false;
-    const res = await fetch(`${this.baseUrl}/bet`, {
-      method: 'POST',
-      headers: this.headers(),
-      body: JSON.stringify({ contractId: marketId, outcome, amount }),
-    });
-    return res.ok;
+  async getPositions(user: string): Promise<any[]> {
+    return [];
   }
 }

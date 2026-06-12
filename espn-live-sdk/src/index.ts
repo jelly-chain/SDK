@@ -1,2 +1,2 @@
-export { EspnLive } from "./espn.js";
-export type { EspnSport, EspnGame, EspnTeam, EspnStanding, EspnSchedule } from "./espn.js";
+export { EspnLiveSDK } from "./client.js";
+export type { EspnLiveConfig } from "./client.js";

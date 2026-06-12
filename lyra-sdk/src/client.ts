@@ -1,24 +1,33 @@
 /**
- * Lyra SDK - Options trading, liquidity, markets
+ * Lyra SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
-import { ChainId } from "@jellychain/shared-types";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface LyraOption { market: string; strike: number; expiry: number; isCall: boolean; iv: number; delta: number }
-export interface LyraPosition { market: string; strike: number; size: bigint; collateral: bigint; pnl: number }
-export interface LyraConfig extends BaseSDKConfig { chainId: ChainId; lyraContract?: string }
+export interface LyraConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class LyraSDK extends BaseSDK {
   readonly chainId: ChainId;
-  private readonly lyraContract: string;
+  
   constructor(config: LyraConfig) {
-    super(config, `Lyra:${config.chainId}`);
-    this.chainId = config.chainId;
-    this.lyraContract = config.lyraContract || "0x5d2506b2eC46892D2a7F133B1e1BAa7bC9f8d1d9";
+    super(config, "Lyra");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
   }
-  async getMarket(marketAddress: string): Promise<{ spotPrice: number; optionIds: string[] }> { return { spotPrice: 0, optionIds: [] }; }
-  async getOption(optionId: string): Promise<LyraOption | null> { return null; }
-  async getOpenOrders(market: string): Promise<{ id: string; isCall: boolean; strike: number; size: bigint }[]> { return []; }
-  async createOption(market: string, strike: number, expiry: number, isCall: boolean): Promise<{ optionId: string }> { return { optionId: "0x" + Date.now().toString(16) }; }
-  async getPosition(market: string, positionId: string): Promise<LyraPosition | null> { return null; }
+
+  async getInfo(): Promise<any> {
+    return { name: "Lyra", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

@@ -1,1 +1,2 @@
-export { OracleSDK as MAINSDK, type OracleFeed as MAINFeed, type OracleConfig as MAINConfig } from "./client.js";
+export { RedstoneSDK } from "./client.js";
+export type { RedstoneConfig } from "./client.js";

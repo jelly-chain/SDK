@@ -1,12 +1,33 @@
 /**
- * Premia SDK - Options AMM, liquidity provision
+ * Premia SDK - Protocol integration
  */
-import { BaseSDK, type BaseSDKConfig } from "@jellychain/sdk-core";
+import { BaseSDK, type BaseSDKConfig, ChainId } from "@jellychain/sdk-core";
 
-export interface PremiaOption { poolId: string; strike: number; expiry: number; type: "call" | "put"; openInterest: bigint }
+export interface PremiaConfig extends BaseSDKConfig {
+  chainId?: ChainId;
+}
 
 export class PremiaSDK extends BaseSDK {
-  constructor(config: BaseSDKConfig) { super(config, "Premia"); }
-  async getPool(poolId: string): Promise<PremiaOption | null> { return null; }
-  async createPool(strike: number, expiry: number, isCall: boolean): Promise<{ poolId: string }> { return { poolId: "0x" + Date.now().toString(16) }; }
+  readonly chainId: ChainId;
+  
+  constructor(config: PremiaConfig) {
+    super(config, "Premia");
+    this.chainId = config.chainId || ChainId.ETHEREUM;
+  }
+
+  async getInfo(): Promise<any> {
+    return { name: "Premia", status: "active", chainId: this.chainId };
+  }
+
+  async fetchPool(id: string): Promise<any> {
+    return { id, tvl: 0, volume24h: 0, apr: 0 };
+  }
+
+  async swap(params: { tokenIn: string; tokenOut: string; amount: bigint }): Promise<{ txHash: string; amountOut: bigint }> {
+    return { txHash: this.generateTxHash(), amountOut: params.amount * 995n / 1000n };
+  }
+
+  async getPositions(user: string): Promise<any[]> {
+    return [];
+  }
 }

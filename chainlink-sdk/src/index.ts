@@ -1,1 +1,2 @@
-export { ChainlinkSDK, type ChainlinkFeed, type ChainlinkAutomation, type ChainlinkConfig } from "./client.js";
+export { ChainlinkSDK } from "./client.js";
+export type { ChainlinkConfig } from "./client.js";

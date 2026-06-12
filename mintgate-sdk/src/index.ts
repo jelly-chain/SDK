@@ -1,1 +1,2 @@
-export { Mintgate } from "./client.js";
+export { MintgateSDK } from "./client.js";
+export type { MintgateConfig } from "./client.js";

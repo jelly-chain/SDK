@@ -1,1 +1,2 @@
-export { BitgetNft } from "./client.js";
+export { BitgetNftSDK } from "./client.js";
+export type { BitgetNftConfig } from "./client.js";
