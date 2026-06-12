@@ -3,7 +3,7 @@
 > **177 Production SDKs · Agent-first prediction & trading infrastructure.**
 
 ![SDKs](https://img.shields.io/badge/SDKs-177%20Production-blue)
-![Commits](https://img.shields.io/badge/Commits-194-green)
+![Commits](https://img.shields.io/badge/Commits-197-green)
 ![Vulnerabilities](https://img.shields.io/badge/Vulnerabilities-0-brightgreen)
 
 This repository contains the complete SDK ecosystem for JellyOS and JellyClaude — AI agent systems that generate predictions, detect arbitrage, and make data-driven decisions across prediction markets (Polymarket, Kalshi), sports betting, and DeFi.
