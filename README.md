@@ -1,6 +1,6 @@
 # SDK-MAIN — JellyOS / JellyClaude Intelligence Layer
 
-> **43 Production SDKs · 507 Planned · Agent-first prediction & trading infrastructure.**
+> **52 Production SDKs · 498 Planned · Agent-first prediction & trading infrastructure.**
 
 ![SDKs](https://img.shields.io/badge/SDKs-41%20Production%20%2F%20509%20Planned-blue)
 ![Commits](https://img.shields.io/badge/Commits-137-green)

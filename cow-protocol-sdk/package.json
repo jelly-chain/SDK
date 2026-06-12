@@ -1,7 +1,7 @@
 {
-  "name": "@jellychain/pancakeswap",
+  "name": "@jellychain/cow-protocol",
   "version": "1.0.0",
-  "description": "SDK for pancakeswap",
+  "description": "SDK for cow-protocol",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
@@ -9,5 +9,5 @@
   "dependencies": { "@jellychain/shared-types": "*", "@jellychain/sdk-core": "*" },
   "devDependencies": { "typescript": "^5.4.0", "@types/node": "^20.12.0" },
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "pancakeswap-sdk" }
+  "repository": { "type": "git", "url": "https://github.com/jelly-chain/SDK.git", "directory": "cow-protocol-sdk" }
 }

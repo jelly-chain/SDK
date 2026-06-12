@@ -1,7 +1,7 @@
 {
-  "name": "@jellychain/jupiter-aggregator-sdk",
+  "name": "@jellychain/jupiter-aggregator",
   "version": "1.0.0",
-  "description": "Agent-focused SDK for jupiter-aggregator-sdk",
+  "description": "SDK for jupiter-aggregator",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },

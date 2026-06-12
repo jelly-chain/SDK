@@ -1,7 +1,7 @@
 {
-  "name": "@jellychain/sushiswap-sdk",
+  "name": "@jellychain/sushiswap",
   "version": "1.0.0",
-  "description": "Agent-focused SDK for sushiswap-sdk",
+  "description": "SDK for sushiswap",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },

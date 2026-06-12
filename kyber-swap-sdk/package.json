@@ -1,7 +1,7 @@
 {
-  "name": "@jellychain/kyber-swap-sdk",
+  "name": "@jellychain/kyber-swap",
   "version": "1.0.0",
-  "description": "Agent-focused SDK for kyber-swap-sdk",
+  "description": "SDK for kyber-swap",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": { ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" } },
